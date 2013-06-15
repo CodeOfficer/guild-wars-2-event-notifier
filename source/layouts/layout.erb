@@ -5,11 +5,12 @@
 
     <!-- Always force latest IE rendering engine or request Chrome Frame -->
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Use title if it's in the page YAML frontmatter -->
     <title><%= data.page.title || "Guild Wars 2 Event Notifier" %></title>
 
-    <%= stylesheet_link_tag "bootstrap", "bootstrap-responsive", "custom" %>
+    <%= stylesheet_link_tag "vendor", "app" %>
     <%= javascript_include_tag  "vendor", "app" %>
   </head>
 

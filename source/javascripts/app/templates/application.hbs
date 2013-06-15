@@ -1,13 +1,28 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
 
-<header id="header">
-  <h1>application.hbs</h1>
-</header>
+    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
 
-<nav>
-  <ul>
-    <li>{{#linkTo "index"}}Index{{/linkTo}}</li>
-    <li>{{#linkTo "worlds"}}Worlds{{/linkTo}}</li>
-  </ul>
-</nav>
+      <a class="brand" href="#">GW2 Event Notifier</a>
+
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+          {{#linkTo "index" tagName="li" href=false}}
+            {{#linkTo "index"}}Index{{/linkTo}}
+          {{/linkTo}}
+          {{#linkTo "worlds" tagName="li" href=false}}
+            {{#linkTo "worlds"}}Worlds{{/linkTo}}
+          {{/linkTo}}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 {{outlet}}
