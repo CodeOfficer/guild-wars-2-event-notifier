@@ -1,0 +1,10 @@
+
+<div>worlds/index.hbs</div>
+
+{{#each world in controller}}
+  <div>
+    {{#linkTo "worlds.world" world}}{{world.name}}{{/linkTo}}
+  </div>
+{{else}}
+  <div>No worlds found</div>
+{{/each}}

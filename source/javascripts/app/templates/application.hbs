@@ -1,1 +1,13 @@
-<h1>Hello Ember.js</h1>
+
+<header id="header">
+  <h1>application.hbs</h1>
+</header>
+
+<nav>
+  <ul>
+    <li>{{#linkTo "index"}}Index{{/linkTo}}</li>
+    <li>{{#linkTo "worlds"}}Worlds{{/linkTo}}</li>
+  </ul>
+</nav>
+
+{{outlet}}
