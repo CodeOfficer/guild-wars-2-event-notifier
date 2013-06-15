@@ -6,4 +6,3 @@
 //= require ./vendor/ember-data-latest
 //= require ./vendor/ember-console-utils
 //= require ./vendor/ember-bootstrap
-//= require_tree ./vendor/
