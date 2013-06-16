@@ -1,6 +1,10 @@
 
 App.WorldsIndexController = Ember.ArrayController.extend({
 
-  sortProperties: ['name']
+  needs: ['worlds'],
+
+  sortProperties: ['name'],
+
+  breadcrumbsBinding: 'controllers.worlds.breadcrumbs'
 
 });

@@ -28,6 +28,9 @@ https://github.com/domenic/sinon-chai
 http://cjohansen.no/en/javascript/sinon_js_0_6_0_fake_xmlhttprequest_and_improved_test_framework_integration
 
 
+https://github.com/nostalgiaz/bootstrap-switch
+http://www.larentis.eu/switch/
+
 region
 
   North America - US

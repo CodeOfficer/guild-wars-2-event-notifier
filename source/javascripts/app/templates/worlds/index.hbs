@@ -1,6 +1,8 @@
 
 <div>worlds/index.hbs</div>
 
+{{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
+
 {{#each world in controller}}
   <div>
     {{#linkTo "worlds.world" world}}{{world.name}}{{/linkTo}}
