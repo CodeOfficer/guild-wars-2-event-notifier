@@ -2,7 +2,8 @@
 App.WorldsRoute = Ember.Route.extend({
 
   model: function() {
-    return App.World.find();
+    console.log('WorldsRoute#model');
+    return this.modelFor('application');
   }
 
 });
