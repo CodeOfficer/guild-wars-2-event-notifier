@@ -13,7 +13,28 @@ App = Ember.Application.create({
   LOG_TRANSITIONS: true,
   LOG_TRANSITIONS_INTERNAL: true,
 
-  rootElement: '#app'
+  rootElement: '#app',
+
+  ready: function(){
+    // load settings from localstorage, an initial call is required for some reason
+    App.Setting.find();
+  },
+
+  lookupStore: function() {
+    return this.__container__.lookup('store:main');
+  },
+
+  lookupRouter: function() {
+    return this.__container__.lookup('router:main');
+  },
+
+  lookupController: function(controllerName, options) {
+    return this.__container__.lookup('controller:' + controllerName, options);
+  },
+
+  lookupContainer: function(){
+    return this.__container__;
+  }
 });
 
 
@@ -74,3 +95,7 @@ App.Store = DS.Store.extend({
   adapter: App.RESTAdapter.create()
 });
 
+
+App.Store.registerAdapter('App.Setting', DS.LSAdapter.extend({
+  // namespace: 'my app'
+}));

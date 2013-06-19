@@ -4,5 +4,6 @@
 //= require ./vendor/handlebars
 //= require ./vendor/ember-latest
 //= require ./vendor/ember-data-latest
+//= require ./vendor/ember-localstorage-adapter
 //= require ./vendor/ember-console-utils
 //= require ./vendor/ember-bootstrap
