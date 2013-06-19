@@ -11,19 +11,29 @@ var Bootstrap = window.Bootstrap;
 var jQuery = window.jQuery;
 
 var modalPaneTemplate = [
-'<div class="modal-header">',
-'  <a href="#" class="close" rel="close">&times;</a>',
+'{{#if view.heading}}',
+'  <div class="modal-header">',
+'  {{#if view.showCloseButton}}',
+'    <a href="#" class="close" rel="close">&times;</a>',
+'  {{/if}}',
 '  {{view view.headerViewClass}}',
-'</div>',
+'  </div>',
+'{{/if}}',
 '<div class="modal-body">{{view view.bodyViewClass}}</div>',
 '<div class="modal-footer">',
-'  {{view view.footerViewClass}}',
+'  {{#if view.secondary}}',
+'   <button class="btn btn-secondary" type="button" rel="secondary">',
+'     {{#if view.secondaryIcon}}{{view view.secondaryIconViewClass}}{{/if}}',
+'     {{view.secondary}}',
+'  </button>',
+'  {{/if}}',
+'  {{#if view.primary}}',
+'   <button class="btn btn-primary" type="button" rel="primary" {{bindAttr disabled="view.isNotValid"}}>',
+'     {{#if view.primaryIcon}}{{view view.primaryIconViewClass}}{{/if}}',
+'     {{view.primary}}',
+'  </button>',
+'  {{/if}}',
 '</div>'].join("\n");
-
-var footerTemplate = [
-'{{#if view.parentView.secondary}}<a href="#" class="btn btn-secondary" rel="secondary">{{view.parentView.secondary}}</a>{{/if}}',
-'{{#if view.parentView.primary}}<a href="#" class="btn btn-primary" rel="primary">{{view.parentView.primary}}</a>{{/if}}'].join("\n");
-
 var modalPaneBackdrop = '<div class="modal-backdrop"></div>';
 
 Bootstrap.ModalPane = Ember.View.extend({
@@ -34,6 +44,8 @@ Bootstrap.ModalPane = Ember.View.extend({
   primary: null,
   secondary: null,
   showBackdrop: true,
+  showCloseButton: true,
+  closeOnEscape: true,
   headerViewClass: Ember.View.extend({
     tagName: 'h3',
     template: Ember.Handlebars.compile('{{view.parentView.heading}}')
@@ -42,9 +54,24 @@ Bootstrap.ModalPane = Ember.View.extend({
     tagName: 'p',
     template: Ember.Handlebars.compile('{{{view.parentView.message}}}')
   }),
-  footerViewClass: Ember.View.extend({
-    template: Ember.Handlebars.compile(footerTemplate)
-  }),
+
+  isNotValid: function () {
+    if (!Ember.isEmpty(this.get('context.content'))) {
+      return !this.get('context.content.isValid');
+    }
+    return false;
+  }.property('context.content.isValid'),
+
+  primaryIcon: null,
+  primaryIconViewClass: function() {
+    var icon = this.get('primaryIcon');
+    return Bootstrap.Icon.extend({ classNames:  icon});
+  }.property('primaryIcon'),
+  secondaryIcon: null,
+  secondaryIconViewClass: function() {
+    var icon = this.get('secondaryIcon');
+    return Bootstrap.Icon.extend({ classNames:  icon});
+  }.property('secondaryIcon'),
 
   didInsertElement: function() {
     if (get(this, 'showBackdrop')) this._appendBackdrop();
@@ -57,7 +84,7 @@ Bootstrap.ModalPane = Ember.View.extend({
   },
 
   keyPress: function(event) {
-    if (event.keyCode === 27) {
+    if (get(this, 'closeOnEscape') && event.keyCode === 27) {
       this._triggerCallbackAndDestroy({ close: true }, event);
     }
   },
@@ -69,8 +96,7 @@ Bootstrap.ModalPane = Ember.View.extend({
     if (targetRel === 'close') {
       this._triggerCallbackAndDestroy({ close: true }, event);
       return false;
-
-    } else if (targetRel === 'primary') {
+    } else if (targetRel === 'primary' && !this.get('isNotValid')) {
       this._triggerCallbackAndDestroy({ primary: true }, event);
       return false;
 
@@ -87,9 +113,9 @@ Bootstrap.ModalPane = Ember.View.extend({
 
   _setupDocumentKeyHandler: function() {
     var cc = this,
-        handler = function(event) {
-          cc.keyPress(event);
-        };
+      handler = function(event) {
+        cc.keyPress(event);
+      };
     jQuery(window.document).bind('keyup', handler);
     this._keyUpHandler = handler;
   },
@@ -118,7 +144,6 @@ Bootstrap.ModalPane.reopenClass({
     return modalPane;
   }
 });
-
 
 })();
 
@@ -318,13 +343,65 @@ Bootstrap.Pills = Ember.CollectionView.extend({
 
 
 (function() {
+var get = Ember.get, set = Ember.set;
 var Bootstrap = window.Bootstrap;
+
+Bootstrap.TabContainerView = Ember.View.extend({
+});
+
+Bootstrap.TabView = Ember.View.extend({
+  tagName: 'li',
+  classNameBindings: ['isActive:active'],
+
+  tabsContainer: Ember.computed(function () {
+    return this.nearestOfType(Bootstrap.TabContainerView);
+  }).property().volatile(),
+
+  mouseUp: function () {
+    set(this, 'tabsContainer.currentView', get(this, 'value'));
+  },
+
+  isActive: function() {
+    return this.get('value') === this.get('tabsContainer.currentView');
+  }.property('tabsContainer.currentView').cacheable()
+});
+
+Bootstrap.TabPaneView = Ember.View.extend({
+  tabsContainer: Ember.computed(function () {
+    return this.nearestOfType(Bootstrap.TabContainerView);
+  }).property().volatile(),
+
+  isVisible: Ember.computed(function () {
+    return get(this, 'viewName') === get(this, 'tabsContainer.currentView');
+  }).property('tabsContainer.currentView').volatile()
+});
+
+
+
 Bootstrap.Tabs = Ember.CollectionView.extend({
   classNames: ['nav', 'nav-tabs'],
   classNameBindings: ['isStacked:nav-stacked'],
   tagName: 'ul',
   itemViewClass: Bootstrap.PillItem,
   selection: null
+});
+
+Bootstrap.TabItem = Ember.View.extend({
+    tagName: 'li',
+    classNameBindings: [/*'isActive:active'*/'active'],
+
+    /*isActive: function() {
+        return this.get('childViews.firstObject.active');
+    }.property('item', 'controller.selectedTab').cacheable()*/
+
+    activeChanged: function () {
+      var self = this;
+      Ember.run.next(this, function () { //delay
+        if (!self.isDestroyed) {
+          self.set('active', self.get('childViews.firstObject.active'));
+        }
+      });
+    }.observes('childViews.firstObject.active') //get the active state from the linkTo helper
 });
 
 })();
@@ -573,6 +650,714 @@ Bootstrap.Breadcrumb = Ember.CollectionView.extend(Bootstrap.FirstLastViewSuppor
 
 
 (function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.AlertBox = Bootstrap.ModalPane.extend({
+  primary: 'OK',
+  primaryIcon: ['icon-ok', 'icon-white'],
+  closeOnEscape: false,
+  showCloseButton: false,
+
+  bodyViewClass: Ember.View.extend({
+    tagName: 'p',
+    template: Ember.Handlebars.compile([
+      '{{#if view.parentView.icon}}',
+      '<div class="span2">',
+      ' {{view view.parentView.iconViewClass}}',
+      '</div>',
+      '{{/if}}',
+      '<div>{{{view.parentView.message}}}</div>'
+      ].join("\n"))
+  }),
+
+  icon: null,
+  iconViewClass: function() {
+    var icon = this.get('icon');
+    return Bootstrap.Icon.extend({ classNames: [icon, "icon-thumbnail"], styleBinding: "parentView.parentView.iconStyle" });
+  }.property('icon')
+});
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.ConfirmBox = Bootstrap.AlertBox.extend({
+  primary: 'Ja',
+  secondary: 'Nee',
+  secondaryIcon: ['icon-remove']
+});
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.FocusSupport = Ember.Mixin.create({
+  attributeBindings: ['autofocus'], //HTML5 autofocus see http://diveintohtml5.info/forms.html#autofocus
+
+  didInsertElement: function() {
+    this._super();
+    if (this.get('autofocus')) {
+      Ember.run.schedule('actions', this, function() {
+        this.$().focus();
+      });
+    }
+  }
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.TextSupport = Ember.Mixin.create({
+  valueBinding: 'parentView.value',
+  placeholderBinding: 'parentView.placeholder',
+  disabledBinding: 'parentView.disabled',
+  maxlengthBinding: 'parentView.maxlength',
+  classNameBindings: 'parentView.inputClassNames',
+  attributeBindings: ['name', 'readonly', 'placeholder'],
+
+  name: Ember.computed(function() {
+    return get(this, 'parentView.name') || get(this, 'parentView.label');
+  }).property('parentView.name', 'parentView.label').cacheable(),
+
+  didInsertElement: function() {
+    this._super();
+    Ember.run.schedule('actions', this, function() {
+      //this.$().placeholder();
+    });
+  }
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+//requires Date Format http://stevenlevithan.com/assets/misc/date.format.js
+
+Bootstrap.DatePicker = Ember.TextField.extend(Bootstrap.TextSupport, Bootstrap.FocusSupport, {
+  format: 'dd-mm-yyyy',
+  weekStart: 1,
+  calendarWeeks: false,
+  startDate: -Infinity,
+  endDate: Infinity,
+  daysOfWeekDisabled: [],
+  autoclose: true,
+  startView: 'month',
+  minViewMode: 'days',
+  todayBtn: false,
+  todayHighlight: false,
+  keyboardNavigation: true,
+  language: 'nl',
+  forceParse: true,
+  //inputs: [],
+  beforeShowDay: $.noop,
+
+  _value: null,
+
+  attributeBindings: ['name', 'type', /*'value',*/ 'readonly'],
+
+  init: function() {
+    this._super();
+    this.get('attributeBindings').removeObject('value');
+  },
+
+  value: function (key, value) {
+    var datepicker = (this.state === 'inDOM') && this.$() ? this.$().data('datepicker') : undefined;
+    if (arguments.length === 1) { // getter
+      //if (!Ember.isEmpty(datepicker)) {
+      //  return new ISO8601Date(datepicker.getDate());
+      //}
+      return this.get('_value');
+    } else { // setter
+      if (!Ember.isEmpty(value)) {
+        var date = null,
+          format = this.get('format'),
+          language = this.get('language')
+        if (Ember.typeOf(value) === 'date' && !isNaN(value)) {
+          date = value;
+          if (!Ember.isEmpty(datepicker)) {
+            datepicker.update(date);
+          }
+        } else if (Ember.typeOf(value) === 'string') {
+          if (format.length === value.length) { //assume datepicker has set the date
+            date = $.fn.datepicker.DPGlobal.parseDate(
+              value,
+              $.fn.datepicker.DPGlobal.parseFormat(format),
+              language);
+          } else if (value.match(/^(\d{4})(?:-?W(\d+)(?:-?(\d+)D?)?|(?:-(\d+))?-(\d+))(?:[T ](\d+):(\d+)(?::(\d+)(?:\.(\d+))?)?)?(?:Z(-?\d*))?$/)) {
+            date = new ISO8601Date(value);
+            if (!Ember.isEmpty(datepicker)) {
+              datepicker.update(date);
+            }
+          }
+        }
+        if (Ember.typeOf(date) === 'date' && !isNaN(date)) {
+          this.set('_value', date);
+          return date;
+        }
+      }
+      this.set('_value', null);
+      if (!Ember.isEmpty(datepicker)) {
+        //datepicker.update(''); //doesn't work
+        if (!datepicker.isInput) {
+          if (datepicker.component) {
+            datepicker.element.find('input').val(null);
+          }
+        } else {
+          datepicker.element.val(null);
+        }
+      }
+      return null;
+    }
+  }.property(),
+
+  didInsertElement: function () {
+    this._super();
+    var self = this;
+    Ember.run.schedule('actions', this, function () {
+      var value = this.get('_value');
+      self.$().datepicker({
+        format: self.get('format'),
+        weekStart: self.get('weekStart'),
+        startDate: self.get('startDate'),
+        endDate: self.get('endDate'),
+        daysOfWeekDisabled: self.get('daysOfWeekDisabled'),
+        autoclose: self.get('autoclose'),
+        startView: self.get('startView'),
+        minViewMode: self.get('minViewMode'),
+        todayBtn: self.get('todayBtn'),
+        todayHighlight: self.get('todayHighlight'),
+        keyboardNavigation: self.get('keyboardNavigation'),
+        language: self.get('language'),
+        forceParse: self.get('forceParse'),
+        //inputs: self.get('inputs'),
+        beforeShowDay: self.get('beforeShowDay')
+      }).on('changeDate', function (ev) {
+        //self.set('_value', ev.date);
+      });
+      if (!Ember.isEmpty(value)) {
+        var datepicker = self.$().data('datepicker');
+        datepicker.update(value);
+      }
+    });
+  },
+
+  willDestroyElement: function() {
+    this._super();
+    var picker = this.$().data('datepicker').picker;
+    Ember.run.schedule('actions', this, function() {
+      //cleanup
+      picker.remove();
+    });
+  }
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.TimePicker = Ember.View.extend({
+  //template: 'dropdown',
+  minuteStep: 1,
+  showSeconds: false,
+  secondStep: 15,
+  defaultTime: 'value',
+  showMeridian: false,
+  showInputs: true,
+  //disableFocus: false,
+  //modalBackdrop: false,
+
+  classNames: 'input-append bootstrap-timepicker-component',
+  attributeBindings: ['name'],
+  template: Ember.Handlebars.compile([
+    '{{view view.inputField}}',
+    '<span class="add-on">',
+    '  <i class="icon-time"></i>',
+    '</span>'].join("\n")),
+
+  inputField: Ember.TextField.extend(/*Bootstrap.FocusSupport,*/ {
+    classNames: 'timepicker-default',
+    attributeBindings: ['name', 'type', 'value', 'readonly'],
+    valueBinding: 'parentView.value',
+    disabledBinding: 'parentView.disabled'
+  }),
+
+  didInsertElement: function() {
+    this._super();
+    var self = this;
+    Ember.run.schedule('actions', this, function() {
+      $(self.$().children()[0]).timepicker({
+        //template: self.get('template'),
+        minuteStep: self.get('minuteStep'),
+        showSeconds: self.get('showSeconds'),
+        secondStep: self.get('secondStep'),
+        defaultTime: self.get('defaultTime'),
+        showMeridian: self.get('showMeridian'),
+        showInputs: self.get('showInputs')/*,
+        disableFocus: self.get('disableFocus'),
+        modalBackdrop: self.get('modalBackdrop')*/
+      });
+    });
+  },
+
+  willDestroyElement: function() {
+    var widget = $(this.$().children()[0]).data('timepicker').$widget;
+    Ember.run.schedule('actions', this, function() {
+      //cleanup
+      widget.remove();
+    });
+  }
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.ColorPicker = Ember.View.extend({
+  format: 'rgb',
+
+  classNames: 'input-append color',
+  attributeBindings: ['name', 'data-color', 'data-color-format'],
+  template: Ember.Handlebars.compile([
+    '{{view view.inputField}}',
+    '<span class="add-on">',
+    '  <i {{bindAttr style="view.iStyle"}}></i>',
+    '</span>'].join("\n")),
+
+  iStyle: function() {
+    return 'background-color:' + this.get('value');
+  }.property('value'),
+
+  'data-colorBinding': 'value',
+
+  inputField: Ember.TextField.extend(/*Bootstrap.FocusSupport,*/ {
+    attributeBindings: ['name', 'type', 'value', 'readonly'],
+    valueBinding: 'parentView.value',
+    disabledBinding: 'parentView.disabled'
+  }),
+
+  didInsertElement: function() {
+    var self = this;
+    Ember.run.next(/*schedule('actions', this,*/ function() {
+      self.$().colorpicker({format: self.get('format')});
+    });
+  },
+
+  willDestroyElement: function() {
+    var picker = this.$().data('colorpicker').picker;
+    Ember.run.schedule('actions', this, function() {
+      //cleanup
+      picker.remove();
+    });
+  }
+});
+
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Icon = Ember.View.extend({
+    tagName: 'i',
+    attributeBindings: ['style'],
+    classNames: ['icon']
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.TypeAhead = Ember.TextField.extend(Bootstrap.FocusSupport, {
+  minLength: 1, //The max number of items to display in the dropdown.
+  items: 8, //The minimum character length needed before triggering autocomplete suggestions
+
+  url: '/autocomplete',
+  labelProperty: 'label',
+  idProperty: 'id',
+
+  didInsertElement: function() {
+    this._super();
+    var self = this;
+    Ember.run.schedule('actions', this, function() {
+      var labels, mapped;
+      self.$().typeahead({
+        //https://github.com/twitter/bootstrap/pull/3682
+        source: function (query, process) {
+          if (self.source) {
+            self.source(query, process);
+          } else {
+            self.getQueryPromise(query)
+            .done(function (data) {
+              labels = [];
+              mapped = {};
+
+              $.each(data, function (i, item) {
+                var label = self.getLabel(item);
+                mapped[label] = self.getId(item);
+                labels.push(label);
+              });
+
+              process(labels);
+            });
+          }
+        },
+        updater: function (item) {
+          return self.updater(mapped[item], item);
+        },
+        minLength: self.get('minLength'),
+        items: self.get('items')
+      });
+      self.valueIdChanged();
+    });
+  },
+
+  updater: function(id, label) {
+    this.set('valueId', id);
+    return label;
+  },
+
+  getLabel: function(item) {
+    return Ember.get(item, this.get('labelProperty'));
+  },
+
+  getLabelById: function(id) {
+    return id;
+  },
+
+  getId: function(item) {
+    return Ember.get(item, this.get('idProperty'));
+  },
+
+  getQueryPromise: function (query) {
+    return $.get(this.get('url'), { q: query });
+  },
+
+  valueIdChanged: function() {
+    var id = this.get('valueId');
+    var label = this.$().val();
+
+    if (Ember.isEmpty(label) && !Ember.isEmpty(id)) {
+      label = this.getLabelById(id);
+      this.$()
+        .val(label)
+        .change();
+    }
+  }.observes('valueId')
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Wysihtml5 = Ember.TextArea.extend(Bootstrap.FocusSupport, {
+  fontStyles: true,
+  emphasis: true,
+  lists: true,
+  html: false,
+  link: false,
+  image: false,
+  color: true,
+  stylesheets: false,
+
+  didInsertElement: function() {
+        this._super();
+        var self = this;
+        Ember.run.schedule('actions', this, function() {
+            self.$().wysihtml5({
+        "font-styles": self.get('fontStyles'), //Font styling, e.g. h1, h2, etc. Default true
+        "emphasis": self.get('emphasis'), //Italics, bold, etc. Default true
+        "lists": self.get('lists'), //(Un)ordered lists, e.g. Bullets, Numbers. Default true
+        "html": self.get('html'), //Button which allows you to edit the generated HTML. Default false
+        "link": self.get('link'), //Button to insert a link. Default true
+        "image": self.get('image'), //Button to insert an image. Default true
+        "color": self.get('color'), //Button to change color of font
+        "stylesheets": self.get('stylesheets'),
+                "events": {
+                    "change": function( ) {
+                        var value = self.$().val();
+                        self.set('value', value);
+                    }
+                }
+            });
+        });
+    },
+
+    valueChanged: function() {
+      var value = this.get('value');
+      //Ember.logger.log('Wysihtml: %s', value);
+      //var wysihtml5Editor = this.$().wysihtml5().data("wysihtml5").editor;
+      //var editorValue = wysihtml5Editor.getValue(); //DOESN'T WORK
+      var iframes = this.get('parentView').$().find('iframe').contents().find('.wysihtml5-editor');
+      var editorValue = iframes.html();
+
+      if (!Ember.isEqual(value, editorValue)) {
+        //wysihtml5Editor.setValue(value, true); //DOESN'T WORK
+      iframes.html(value);
+      }
+    }.observes('value')
+});
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.ButtonGroup = Ember.CollectionView.extend({
+  classNames: ['btn-group'],
+
+  itemViewClass: Ember.View.extend({
+    tagName: 'a',
+    template: Ember.Handlebars.compile('{{view.content}}')
+  })
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get, set = Ember.set;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.RadioButtonGroup = Bootstrap.ButtonGroup.extend({
+  selection: null,
+
+  init: function() {
+    this._super();
+    var content = get(this, 'content');
+    if (content && get(this, 'allowsEmptySelection') === false) {
+      set(this, 'selection', content.get('firstObject'));
+    }
+  },
+
+  itemViewClass: Ember.View.extend(Bootstrap.ItemSelectionSupport, {
+    classNames: 'btn',
+    tagName: 'a',
+    template: Ember.Handlebars.compile('{{view.title}}')
+  })
+});
+
+Bootstrap.Radio = Ember.View.extend(Bootstrap.ItemViewTitleSupport, {
+    classNames: ['radio'],
+    tagName: 'label',
+    attributeBindings: ['title'],
+
+    init: function () {
+        this._super();
+        this.on("change", this, this._updateElementValue);
+    },
+
+    destroy: function() {
+        this._super();
+        this.off("change", this, this._updateElementValue);
+    },
+
+    _updateElementValue: function () {
+        this.set('parentView.value', this.get('radioValue'));
+    },
+
+    checked: function () {
+        return Ember.isEqual(this.get('parentView.value'), this.get('radioValue'));
+    }.property('parentView.value', 'radioValue'),
+
+    radioName: function () {
+        return '%@_%@'.fmt(Ember.guidFor(this.get('parentView')), this.get('radioValue'));
+    }.property('parentView', 'radioValue'),
+
+    radioLabel: function() {
+        var labelProp = this.get('parentView.itemLabelProperty');
+        return this.get('content.%@'.fmt(labelProp));
+    }.property('content', 'parentView.itemLabelProperty'),
+
+    radioValue: function () {
+        var valueProp = this.get('parentView.itemValueProperty');
+        return this.get('content.%@'.fmt(valueProp));
+    }.property('content', 'parentView.itemValueProperty'),
+
+    template: Ember.Handlebars.compile('<input type="radio" {{bindAttr name="view.radioName" value="view.radioValue" checked="view.checked"}}> {{view.radioLabel}}')
+});
+
+//usage: {{view Bootstrap.RadiosGroup contentBinding="controller.questions" valueBinding="controller.checkedQuestionId"}}
+Bootstrap.RadioGroup = Ember.CollectionView.extend({
+    itemViewClass: Bootstrap.Radio,
+    valueBinding: null,
+    contentBinding: null,
+    itemLabelProperty: 'description',
+    itemValueProperty: 'id'
+});
+
+
+})();
+
+
+
+(function() {
+var get = Ember.get, set = Ember.set;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.InlineCheckbox = Ember.View.extend(Bootstrap.ItemViewTitleSupport, {
+    classNames: ['checkbox inline'],
+    tagName: 'label',
+    attributeBindings: ['title'],
+
+    init: function () {
+        this._super();
+        this.on("change", this, this._updateElementValue);
+    },
+
+    destroy: function () {
+        this._super();
+        this.off("change", this, this._updateElementValue);
+    },
+
+    _updateElementValue: function (evt) {
+        if (evt.target.checked) {
+            this.get('parentView.value').pushObject(this.get('radioValue'));
+        } else {
+            this.get('parentView.value').removeObject(this.get('radioValue'));
+        }
+    },
+
+    checked: function () {
+        return this.get('parentView.value').contains(this.get('radioValue'));
+    }.property('parentView.value', 'radioValue'),
+
+    radioLabel: function () {
+        var labelProp = this.get('parentView.itemLabelProperty');
+        return this.get('content.%@'.fmt(labelProp));
+    }.property('content', 'parentView.itemLabelProperty'),
+
+    radioValue: function () {
+        var valueProp = this.get('parentView.itemValueProperty');
+        return this.get('content.%@'.fmt(valueProp));
+    }.property('content', 'parentView.itemValueProperty'),
+
+    template: Ember.Handlebars.compile('<input type="checkbox" {{bindAttr value="view.radioValue" checked="view.checked"}}> {{view.radioLabel}}')
+});
+
+Bootstrap.CheckboxGroup = Ember.CollectionView.extend({
+    itemViewClass: Bootstrap.InlineCheckbox,
+    valueBinding: null,
+    contentBinding: null,
+    itemLabelProperty: 'description',
+    itemValueProperty: 'id'
+});
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+Bootstrap.SortingTableHeader = Ember.View.extend({
+  tagName: 'th',
+
+  template: Ember.Handlebars.compile('{{view.text}} <i {{bindAttr class="view.icon :noPrint"}}></i>'),
+
+  classNames: ['pointerCursor'],
+
+  sortableArrayBinding: 'controller', //default the controller //'bindingContext.content'
+
+  icon: function () {
+    var sortableArray = this.get('sortableArray');
+    if (!Ember.isEmpty(sortableArray)) {
+      var sortProps = sortableArray.get('sortProperties');
+      if (Ember.isArray(sortProps) && sortProps.contains(this.get('property'))) {
+        if (sortableArray.get('sortAscending')) {
+          return 'icon-sort-up';
+        } else {
+          return 'icon-sort-down';
+        }
+      }
+    }
+    return 'icon-sort';
+  } .property('sortableArray.sortProperties', 'sortableArray.sortAscending'),
+
+  click: function (evt) {
+    var sortableArray = this.get('sortableArray');
+    var sortProps = sortableArray.get('sortProperties');
+    if (Ember.isArray(sortProps) && sortProps.contains(this.get('property'))) {
+      sortableArray.toggleProperty('sortAscending');
+    }
+    sortableArray.set('sortProperties', Ember.makeArray(this.get('property'))); //sortProperties triggers the sort
+  }
+});
+
+})();
+
+
+
+(function() {
+var get = Ember.get;
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Tooltip = Ember.View.extend({
+  tagName: 'a',
+  attributeBindings: ['data-toggle', 'title', 'data-animation', 'data-html', 'data-placement', 'data-selector', 'data-trigger', 'data-title', 'data-trigger', 'data-delay', 'data-container'],
+
+  'data-toggle': 'tooltip',
+  'data-animation': true, //apply a css fade transition to the tooltip
+  'data-html': false, //Insert html into the popover. If false, jquery's text method will be used to insert content into the dom. Use text if you're worried about XSS attacks.
+  'data-placement': 'right', //how to position the popover - top | bottom | left | right
+  'data-selector': false, //if a selector is provided, tooltip objects will be delegated to the specified targets
+  'data-trigger': 'click', //how popover is triggered - click | hover | focus | manual
+  'data-title': '', //default title value if `title` attribute isn't present
+  'data-trigger': 'hover focus', //how tooltip is triggered - click | hover | focus | manual. Note you case pass trigger mutliple, space seperated, trigger types.
+  'data-delay': 0, //delay showing and hiding the tooltip (ms) - does not apply to manual trigger type If a number is supplied, delay is applied to both hide/show Object structure is: delay: { show: 500, hide: 100 }
+  'data-container': false, //Appends the tooltip to a specific element container: 'body'
+
+  didInsertElement: function () {
+    var self = this;
+    Ember.run.schedule('actions', this, function () {
+      self.$().tooltip();
+    });
+  },
+
+  willDestroyElement: function () {
+    this.$().tooltip('hide');
+  }
+});
+
+})();
+
+
+
+(function() {
 window.Bootstrap.Forms = Ember.Namespace.create({
 
   human: function(value) {
@@ -595,14 +1380,15 @@ window.Bootstrap.Forms = Ember.Namespace.create({
 
 (function() {
 var Bootstrap = window.Bootstrap;
+
 Bootstrap.Forms.Field = Ember.View.extend({
   tagName: 'div',
   classNames: ['control-group'],
   labelCache: undefined,
   help: undefined,
   template: Ember.Handlebars.compile([
-    '{{view view.labelView viewName="labelView"}}',
-    '<div class="controls">',
+    '{{#if view.label}}{{view view.labelView viewName="labelView"}}{{/if}}',
+    '<div {{bindAttr class="view.label:controls view.iconSpanView:input-append"}}>',
     '  {{view view.inputField viewName="inputField"}}',
     '  {{view view.errorsView}}',
     '  {{view view.helpView}}',
@@ -627,6 +1413,7 @@ Bootstrap.Forms.Field = Ember.View.extend({
 
   labelView: Ember.View.extend({
     tagName: 'label',
+    classNameBindings: ['parentView.labelFieldClassNames'],
     classNames: ['control-label'],
     template: Ember.Handlebars.compile('{{view.value}}'),
 
@@ -648,15 +1435,40 @@ Bootstrap.Forms.Field = Ember.View.extend({
     }).property('parentView.label'),
 
     inputElementId: 'for',
-    forBinding: 'inputElementId',
+    forBinding: 'inputElementId', //'parentView.name'
     attributeBindings: ['for']
   }),
 
   inputField: Ember.View.extend({
     classNames: ['ember-bootstrap-extend'],
     tagName: 'div',
-    template: Ember.Handlebars.compile('This class is not meant to be used directly, but extended.')
+    template: Ember.Handlebars.compile('') //'This class is not meant to be used directly, but extended.'
   }),
+
+  valueChanged: function () {
+    var binding = this.get('valueBinding._from'),
+      fieldName = null,
+      object = null;
+
+    if (binding) {
+      binding = binding.split(".");
+      fieldName = binding[binding.length - 1];
+      object = this.get(binding.slice(0, binding.length - 1).join('.'));
+    } else {
+      fieldName = this.get('label');
+      object = this.get('context');
+    }
+
+    Ember.run.schedule('actions', this, function () { //so bindings are flushed
+      var errors = Em.get(object, 'errors');
+      if (!Ember.isEmpty(errors)) {
+        errors.clear();
+      }
+      if (object != null && object.validate) {
+        object.validate();
+      }
+    });
+  }.observes('value'),
 
   errorsView: Ember.View.extend({
     tagName: 'div',
@@ -680,11 +1492,15 @@ Bootstrap.Forms.Field = Ember.View.extend({
         }
 
         if (object && !object.get('isValid')) {
-          var errors = object.get('errors');
+          //var errors = object.get('errors');
+          var errors = object.get('errors.' + fieldName  + '.messages');
 
-          if (errors && fieldName in errors && !Ember.isEmpty(errors[fieldName])) {
+          //if (errors && fieldName in errors && !Ember.isEmpty(errors[fieldName])) {
+          //    parent.$().addClass('error');
+          //    this.$().html(errors[fieldName].join(', '));
+          if (!Ember.isEmpty(errors)) {
             parent.$().addClass('error');
-            this.$().html(errors[fieldName].join(', '));
+            this.$().html(errors.join(', '));
           } else {
             parent.$().removeClass('error');
             this.$().html('');
@@ -694,7 +1510,7 @@ Bootstrap.Forms.Field = Ember.View.extend({
           this.$().html('');
         }
       }
-    }, 'parentView.context.isValid', 'parentView.label')
+    }, 'parentView.context.isValid', 'parentView.label', 'parentView.context.errors.length')
   }),
 
   helpView: Ember.View.extend({
@@ -714,13 +1530,14 @@ Bootstrap.Forms.Field = Ember.View.extend({
 
 
 (function() {
-var Bootstrap = window.Bootstrap;
+var Bootstrap = window.Bootstrap,
+  get = Ember.get;
 
 Bootstrap.Forms.Select = Bootstrap.Forms.Field.extend({
   optionLabelPath: 'content',
   optionValuePath: 'content',
 
-  inputField: Ember.Select.extend({
+  inputField: Ember.Select.extend(Bootstrap.FocusSupport, {
     contentBinding:         'parentView.content',
 
     optionLabelPathBinding: 'parentView.optionLabelPath',
@@ -730,6 +1547,7 @@ Bootstrap.Forms.Select = Bootstrap.Forms.Field.extend({
     selectionBinding:       'parentView.selection',
     promptBinding:          'parentView.prompt',
     multipleBinding:        'parentView.multiple',
+    autofocusBinding:       'parentView.autofocus',
     disabledBinding:        'parentView.disabled',
     classNameBindings:      ['parentView.inputClassNames'],
     name: Ember.computed(function() {
@@ -743,19 +1561,10 @@ Bootstrap.Forms.Select = Bootstrap.Forms.Field.extend({
 
 
 (function() {
-var get = Ember.get;
 var Bootstrap = window.Bootstrap;
 
-Bootstrap.TextSupport = Ember.Mixin.create({
-  valueBinding: 'parentView.value',
-  placeholderBinding: 'parentView.placeholder',
-  disabledBinding: 'parentView.disabled',
-  maxlengthBinding: 'parentView.maxlength',
-  classNameBindings: 'parentView.inputClassNames',
-  attributeBindings: ['name'],
-  name: Ember.computed(function() {
-    return get(this, 'parentView.name') || get(this, 'parentView.label');
-  }).property('parentView.name', 'parentView.label').cacheable()
+Bootstrap.StyleSupport = Ember.Mixin.create({
+  attributeBindings: ['style']
 });
 
 })();
@@ -766,9 +1575,11 @@ Bootstrap.TextSupport = Ember.Mixin.create({
 var Bootstrap = window.Bootstrap;
 Bootstrap.Forms.TextArea = Bootstrap.Forms.Field.extend({
 
-  inputField: Ember.TextArea.extend(Bootstrap.TextSupport, {
+  inputField: Ember.TextArea.extend(Bootstrap.TextSupport, Bootstrap.FocusSupport, Bootstrap.StyleSupport,{
     rowsBinding: 'parentView.rows',
-    colsBinding: 'parentView.cols'
+    colsBinding: 'parentView.cols',
+    autofocusBinding: 'parentView.autofocus',
+    styleBinding: 'parentView.style'
   })
 });
 
@@ -781,9 +1592,25 @@ var Bootstrap = window.Bootstrap;
 Bootstrap.Forms.TextField = Bootstrap.Forms.Field.extend({
   type: 'text',
 
-  inputField: Ember.TextField.extend(Bootstrap.TextSupport, {
+  inputField: Ember.TextField.extend(Bootstrap.TextSupport, Bootstrap.FocusSupport, {
     typeBinding: 'parentView.type',
-    sizeBinding: 'parentView.size'
+    sizeBinding: 'parentView.size',
+    autofocusBinding: 'parentView.autofocus',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+
+    insertNewline: function(event) {
+      var parentView = this.get('parentView');
+      if (parentView.insertNewline) {
+        return parentView.insertNewline(event);
+      }
+    },
+
+    cancel: function(event) {
+      var parentView = this.get('parentView');
+      if (parentView.cancel) {
+        return parentView.cancel(event);
+      }
+    }
   })
 });
 
@@ -793,18 +1620,263 @@ Bootstrap.Forms.TextField = Bootstrap.Forms.Field.extend({
 
 (function() {
 var Bootstrap = window.Bootstrap;
-Bootstrap.Forms.Checkbox = Bootstrap.Forms.Field.extend({
+Bootstrap.Forms.Checkbox = Bootstrap.Forms.Field.extend(Bootstrap.FocusSupport, {
 
   inputField: Ember.Checkbox.extend({
-    attributeBindings: ['name'],
-    checkedBinding:   'parentView.checked',
+    attributeBindings: ['name', 'type', 'checked', 'disabled', 'tabindex'],
+    checkedBinding:   'parentView.value',
     disabledBinding: 'parentView.disabled',
-    classNameBindings: ['parentView.inputClassNames'],
+    autofocusBinding: 'parentView.autofocus',
+    classNameBindings: ['parentView.inputFieldClassNames'],
     name: Ember.computed(function() {
       return this.get('parentView.name') || this.get('parentView.label');
     }).property('parentView.name', 'parentView.label')
   })
 });
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Forms.DatePicker = Bootstrap.Forms.Field.extend({
+  format: 'dd-mm-yyyy',
+  weekStart: 1,
+  calendarWeeks: false,
+  startDate: -Infinity,
+  endDate: Infinity,
+  daysOfWeekDisabled: [],
+  autoclose: true,
+  startView: 'month',
+  minViewMode: 'days',
+  todayBtn: false,
+  todayHighlight: false,
+  keyboardNavigation: true,
+  language: 'nl',
+  forceParse: true,
+  //inputs: [],
+  beforeShowDay: $.noop,
+
+  inputField: Bootstrap.DatePicker.extend({
+    formatBinding: 'parentView.format',
+    weekStartBinding: 'parentView.weekStart',
+    calendarWeeksBinding: 'parentView.calendarWeeks',
+    startDateBinding: 'parentView.startDate',
+    endDateBinding: 'parentView.endDate',
+    daysOfWeekDisabledBinding: 'parentView.daysOfWeekDisabled',
+    formatBinding: 'parentView.format',
+    autocloseBinding: 'parentView.autoclose',
+    startViewBinding: 'parentView.startView',
+    minViewModeBinding: 'parentView.minViewMode',
+    todayBtnBinding: 'parentView.todayBtn',
+    todayHighlightBinding: 'parentView.todayHighlight',
+    keyboardNavigationBinding: 'parentView.keyboardNavigation',
+    languageBinding: 'parentView.language',
+    forceParseBinding: 'parentView.forceParse',
+    inputsBinding: 'parentView.inputs',
+    beforeShowDayBinding: 'parentView.beforeShowDay',
+
+    disabledBinding: 'parentView.disabled',
+    nameBinding: 'parentView.label',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+    valueBinding: 'parentView.value',
+    autofocusBinding: 'parentView.autofocus'
+  })
+});
+
+
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Forms.TimePicker = Bootstrap.Forms.Field.extend({
+  //template: 'dropdown',
+  minuteStep: 1,
+  showSeconds: false,
+  secondStep: 15,
+  defaultTime: 'value',
+  showMeridian: false,
+  showInputs: true,
+  //disableFocus: false,
+  //modalBackdrop: false,
+
+  inputField: Bootstrap.TimePicker.extend({
+    //templateBinding: 'parentView.template',
+    minuteStepBinding: 'parentView.minuteStep',
+    showSecondsBinding: 'parentView.showSeconds',
+    secondStepBinding: 'parentView.secondStep',
+    defaultTimeBinding: 'parentView.defaultTime',
+    showMeridianBinding: 'parentView.showMeridian',
+    showInputsBinding: 'parentView.showInputs',
+    //disableFocusBinding: 'parentView.disableFocus',
+    //modalBackdropBinding: 'parentView.modalBackdrop',
+
+    disabledBinding: 'parentView.disabled',
+    nameBinding: 'parentView.label',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+    valueBinding: 'parentView.value'
+  })
+});
+
+
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Forms.ColorPicker = Bootstrap.Forms.Field.extend({
+  format: 'rgb',
+
+  inputField: Bootstrap.ColorPicker.extend({
+    formatBinding: 'parentView.format',
+
+    disabledBinding: 'parentView.disabled',
+    nameBinding: 'parentView.label',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+    valueBinding: 'parentView.value'
+  })
+});
+
+
+
+})();
+
+
+
+(function() {
+Bootstrap.Forms.Label = Bootstrap.Forms.Field.extend({
+
+  inputField: Bootstrap.Label.extend({
+    contentBinding: 'parentView.value',
+    nameBinding: 'parentView.label',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+    attributeBindings: ['name']
+  })
+});
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Forms.TypeAhead = Bootstrap.Forms.Field.extend({
+  minLength: 1, //The max number of items to display in the dropdown.
+  items: 8, //The minimum character length needed before triggering autocomplete suggestions
+
+  url: '/autocomplete',
+  labelProperty: 'label',
+  idProperty: 'id',
+
+  inputField: Bootstrap.TypeAhead.extend(Bootstrap.StyleSupport, {
+    minLengthBinding: 'parentView.minLengthBinding',
+    itemsBinding: 'parentView.items',
+
+    valueIdBinding: 'parentView.value',
+    nameBinding: 'parentView.label',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+    attributeBindings: ['name'],
+    autofocusBinding: 'parentView.autofocus',
+    urlBinding: 'parentView.url',
+    idPropertyBinding: 'parentView.idProperty',
+    labelPropertyBinding: 'parentView.labelProperty',
+    disabledBinding: 'parentView.disabled',
+    styleBinding: 'parentView.style',
+
+    updater: function(id, label) {
+      var parent = this.get('parentView');
+      if (parent.updater) {
+        return parent.updater(id, label);
+      } else {
+        return this._super.apply(this, arguments);
+      }
+    },
+
+    getLabel: function(item) {
+      var parent = this.get('parentView');
+      if (!Ember.isEmpty(parent) && parent.getLabel) {
+        return parent.getLabel(item);
+      } else {
+        return this._super.apply(this, arguments);
+      }
+    },
+
+    getLabelById: function(id) {
+      var parent = this.get('parentView');
+      if (!Ember.isEmpty(parent) && parent.getLabelById) {
+        return parent.getLabelById(id);
+      } else {
+        return this._super.apply(this, arguments);
+      }
+    },
+
+    getId: function(item) {
+      var parent = this.get('parentView');
+      if (!Ember.isEmpty(parent) && parent.getId) {
+        return parent.getId(item);
+      } else {
+        return this._super.apply(this, arguments);
+      }
+    },
+
+    getQueryPromise: function (query) {
+      var parent = this.get('parentView');
+      if (!Ember.isEmpty(parent) && parent.getQueryPromise) {
+        return parent.getQueryPromise(query);
+      } else {
+        return this._super.apply(this, arguments);
+      }
+    }
+  })
+});
+
+})();
+
+
+
+(function() {
+var Bootstrap = window.Bootstrap;
+
+Bootstrap.Forms.Wysihtml5 = Bootstrap.Forms.Field.extend({
+  fontStyles: true,
+  emphasis: true,
+  lists: true,
+  html: false,
+  link: false,
+  image: false,
+  color: true,
+  stylesheets: false,
+
+  inputField: Bootstrap.Wysihtml5.extend({
+    valueBinding: 'parentView.value',
+    nameBinding: 'parentView.label',
+    styleBinding: 'parentView.style',
+    classNameBindings: ['parentView.inputFieldClassNames'],
+    attributeBindings: ['name', 'style'],
+    autofocusBinding: 'parentView.autofocus',
+    disabledBinding: 'parentView.disabled',
+
+    fontStylesBinding: 'parentView.fontStyles',
+    emphasisBinding: 'parentView.emphasis',
+    listsBinding: 'parentView.lists',
+    htmlBinding: 'parentView.html',
+    linkBinding: 'parentView.link',
+    imageBinding: 'parentView.image',
+    colorBinding: 'parentView.color',
+    stylesheetsBinding: 'parentView.stylesheets'
+  })
+});
+
 })();
 
 
