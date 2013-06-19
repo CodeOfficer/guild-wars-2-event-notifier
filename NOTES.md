@@ -37,3 +37,15 @@ region
   Eurpoe - DE, FR, SP
 
   http://www.iguildwars2.com/events.html
+
+
+https://github.com/rpflorence/ember-localstorage-adapter/blob/master/localstorage_adapter.js
+https://github.com/thomasboyt/data/commit/249f60adbb80ec24a3e7739ce3892711588f7de4
+
+async router
+https://gist.github.com/machty/5723945
+
+integration testing
+http://ianpetzer.wordpress.com/2013/06/14/getting-started-with-integration-testing-ember-js-using-ember-testing-and-qunit-rails/
+
+http://blog.mrloop.com/blog/2013/04/07/ember-data-and-the-meetup-api/
