@@ -1,5 +1,5 @@
-// Version: v0.13-28-ga369cea
-// Last commit: a369cea (2013-06-14 07:46:14 -0700)
+// Version: v0.13-39-gca7ba71
+// Last commit: ca7ba71 (2013-06-20 16:45:54 -0700)
 
 
 (function() {
@@ -189,11 +189,11 @@ var LoadPromise = Ember.Mixin.create(Evented, Deferred, {
     this._super.apply(this, arguments);
 
     this.one('didLoad', this, function() {
-      run(this, 'resolve', this);
+      this.resolve(this);
     });
 
     this.one('becameError', this, function() {
-      run(this, 'reject', this);
+      this.reject(this);
     });
 
     if (get(this, 'isLoaded')) {
@@ -1757,7 +1757,7 @@ DS.Store = Ember.Object.extend(DS._Mappable, {
 
       if (adapter && adapter.findHasMany) {
         adapter.findHasMany(this, record, relationship, idsOrReferencesOrOpaque);
-      } else if (idsOrReferencesOrOpaque !== undefined) {
+      } else if (!isNone(idsOrReferencesOrOpaque)) {
         Ember.assert("You tried to load many records but you have no adapter (for " + type + ")", adapter);
         Ember.assert("You tried to load many records but your adapter does not implement `findHasMany`", adapter.findHasMany);
       }
@@ -3775,7 +3775,11 @@ DS.Model = Ember.Object.extend(Ember.Evented, LoadPromise, {
 
   materializeHasMany: function(name, tuplesOrReferencesOrOpaque) {
     var tuplesOrReferencesOrOpaqueType = typeof tuplesOrReferencesOrOpaque;
-    if (tuplesOrReferencesOrOpaque && tuplesOrReferencesOrOpaqueType !== 'string' && tuplesOrReferencesOrOpaque.length > 1) { Ember.assert('materializeHasMany expects tuples, references or opaque token, not ' + tuplesOrReferencesOrOpaque[0], tuplesOrReferencesOrOpaque[0].hasOwnProperty('id') && tuplesOrReferencesOrOpaque[0].type); }
+
+    if (tuplesOrReferencesOrOpaque && tuplesOrReferencesOrOpaqueType !== 'string' && tuplesOrReferencesOrOpaque.length > 1) {
+      Ember.assert('materializeHasMany expects tuples, references or opaque token, not ' + tuplesOrReferencesOrOpaque[0], tuplesOrReferencesOrOpaque[0].hasOwnProperty('id') && tuplesOrReferencesOrOpaque[0].type);
+    }
+
     if( tuplesOrReferencesOrOpaqueType === "string" ) {
       this._data.hasMany[name] = tuplesOrReferencesOrOpaque;
     } else {
@@ -5863,11 +5867,14 @@ DS.Serializer = Ember.Object.extend({
     this is the opportunity for the serializer to, for example,
     convert numerical IDs back into number form.
 
+    Null or undefined ids will resolve to a null value.
+
     @param {String} id the id from the record
     @returns {any} the serialized representation of the id
   */
   serializeId: function(id) {
-    if (isNaN(id)) { return id; }
+    if(Ember.isEmpty(id)) { return null; }
+    if(isNaN(+id)) { return id; }
     return +id;
   },
 
@@ -6233,21 +6240,21 @@ DS.Serializer = Ember.Object.extend({
     record.materializeAttribute(attributeName, value);
   },
 
-  materializeRelationships: function(record, hash, prematerialized) {
+  materializeRelationships: function(record, serialized, prematerialized) {
     record.eachRelationship(function(name, relationship) {
       if (relationship.kind === 'hasMany') {
         if (prematerialized && prematerialized.hasOwnProperty(name)) {
           var tuplesOrReferencesOrOpaque = this._convertPrematerializedHasMany(relationship.type, prematerialized[name]);
           record.materializeHasMany(name, tuplesOrReferencesOrOpaque);
         } else {
-          this.materializeHasMany(name, record, hash, relationship, prematerialized);
+          this.materializeHasMany(name, record, serialized, relationship, prematerialized);
         }
       } else if (relationship.kind === 'belongsTo') {
         if (prematerialized && prematerialized.hasOwnProperty(name)) {
           var tupleOrReference = this._convertTuple(relationship.type, prematerialized[name]);
           record.materializeBelongsTo(name, tupleOrReference);
         } else {
-          this.materializeBelongsTo(name, record, hash, relationship, prematerialized);
+          this.materializeBelongsTo(name, record, serialized, relationship, prematerialized);
         }
       }
     }, this);
@@ -7020,7 +7027,7 @@ DS.JSONSerializer = DS.Serializer.extend({
       if (relationship.options && relationship.options.polymorphic && !Ember.isNone(id)) {
         this.addBelongsToPolymorphic(hash, key, id, child.constructor);
       } else {
-        hash[key] = id === undefined ? null : this.serializeId(id);
+        hash[key] = this.serializeId(id);
       }
     }
   },
@@ -7123,7 +7130,8 @@ DS.JSONSerializer = DS.Serializer.extend({
     }
 
     this.metadataMapping.forEach(function(property, key){
-      if(value = data[property]){
+      value = data[property];
+      if(!Ember.isNone(value)){
         loader.metaForType(type, key, value);
       }
     });

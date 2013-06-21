@@ -1,5 +1,5 @@
-// Version: v1.0.0-rc.5-78-g5730c31
-// Last commit: 5730c31 (2013-06-16 15:36:14 -0700)
+// Version: v1.0.0-rc.5-110-g9bc6da7
+// Last commit: 9bc6da7 (2013-06-21 10:53:01 -0700)
 
 
 (function() {
@@ -100,12 +100,12 @@ Ember.debug = function(message) {
     will be displayed.
 */
 Ember.deprecate = function(message, test) {
-  if (Ember && Ember.TESTING_DEPRECATION) { return; }
+  if (Ember.TESTING_DEPRECATION) { return; }
 
   if (arguments.length === 1) { test = false; }
   if (test) { return; }
 
-  if (Ember && Ember.ENV.RAISE_ON_DEPRECATION) { throw new Error(message); }
+  if (Ember.ENV.RAISE_ON_DEPRECATION) { throw new Error(message); }
 
   var error;
 
@@ -156,8 +156,8 @@ Ember.deprecateFunc = function(message, func) {
 
 })();
 
-// Version: v1.0.0-rc.5-78-g5730c31
-// Last commit: 5730c31 (2013-06-16 15:36:14 -0700)
+// Version: v1.0.0-rc.5-110-g9bc6da7
+// Last commit: 9bc6da7 (2013-06-21 10:53:01 -0700)
 
 
 (function() {
@@ -7428,6 +7428,10 @@ define("container",
         return value;
       },
 
+      lookupFactory: function(fullName) {
+        return factoryFor(this, fullName);
+      },
+
       has: function(fullName) {
         if (this.cache.has(fullName)) {
           return true;
@@ -8148,8 +8152,8 @@ Ember.String = {
     ```
 
     @method capitalize
-    @param {String} str
-    @return {String}
+    @param {String} str The string to capitalize.
+    @return {String} The capitalized string.
   */
   capitalize: function(str) {
     return str.charAt(0).toUpperCase() + str.substr(1);
@@ -14009,7 +14013,7 @@ Ember Runtime
 */
 
 var jQuery = Ember.imports.jQuery;
-Ember.assert("Ember Views require jQuery 1.8, 1.9, 1.10, or 2.0", jQuery && (jQuery().jquery.match(/^((1\.(8|9|10))|2.0)(\.\d+)?(pre|rc\d?)?/) || Ember.ENV.FORCE_JQUERY));
+Ember.assert("Ember Views require jQuery 1.7, 1.8, 1.9, 1.10, or 2.0", jQuery && (jQuery().jquery.match(/^((1\.(7|8|9|10))|2.0)(\.\d+)?(pre|rc\d?)?/) || Ember.ENV.FORCE_JQUERY));
 
 /**
   Alias for jQuery
@@ -16105,6 +16109,8 @@ Ember.View = Ember.CoreView.extend(
   _parentViewDidChange: Ember.observer(function() {
     if (this.isDestroying) { return; }
 
+    this.trigger('parentViewDidChange');
+
     if (get(this, 'parentView.controller') && !get(this, 'controller')) {
       this.notifyPropertyChange('controller');
     }
@@ -17431,8 +17437,8 @@ Ember.View.applyAttributeBindings = function(elem, name, value) {
       elem.attr(name, value);
     }
   } else if (name === 'value' || type === 'boolean') {
-    // We can't set properties to undefined
-    if (value === undefined) { value = null; }
+    // We can't set properties to undefined or null
+    if (!value) { value = ''; }
 
     if (value !== elem.prop(name)) {
       // value and booleans should always be properties
@@ -18593,6 +18599,103 @@ Ember.CollectionView.CONTAINER_MAP = {
   tr: 'td',
   select: 'option'
 };
+
+})();
+
+
+
+(function() {
+/**
+@module ember
+@submodule ember-views
+*/
+
+/**
+  An `Ember.Control` is a view that is completely
+  isolated. Property access in its templates go
+  to the view object and actions are targeted at
+  the view object. There is no access to the
+  surrounding context or outer controller; all
+  contextual information is passed in.
+
+  The easiest way to create an `Ember.Control` is via
+  a template. If you name a template
+  `controls/my-foo`, you will be able to use
+  `{{my-foo}}` in other templates, which will make
+  an instance of the isolated control.
+
+  ```html
+  {{app-profile person=currentUser}}
+  ```
+
+  ```html
+  <!-- app-profile template -->
+  <h1>{{person.title}}</h1>
+  <img {{bindAttr src=person.avatar}}>
+  <p class='signature'>{{person.signature}}</p>
+  ```
+
+  You can also use `yield` inside a template to
+  include the **contents** of the custom tag:
+
+  ```html
+  {{#my-profile person=currentUser}}
+  <p>Admin mode</p>
+  {{/my-profile}}
+  ```
+
+  ```html
+  <!-- app-profile template -->
+
+  <h1>{{person.title}}</h1>
+  {{yield}} <!-- block contents -->
+  ```
+
+  If you want to customize the control, in order to
+  handle events or actions, you implement a subclass
+  of `Ember.Control` named after the name of the
+  control.
+
+  For example, you could implement the action
+  `hello` for the `app-profile` control:
+
+  ```js
+  App.AppProfileControl = Ember.Control.extend({
+    hello: function(name) {
+      console.log("Hello", name)
+    }
+  });
+  ```
+
+  And then use it in the control's template:
+
+  ```html
+  <!-- app-profile template -->
+
+  <h1>{{person.title}}</h1>
+  {{yield}} <!-- block contents -->
+
+  <button {{action 'hello' person.name}}>
+    Say Hello to {{person.name}}
+  </button>
+  ```
+
+  Controls must have a `-` in their name to avoid
+  conflicts with built-in controls that wrap HTML
+  elements. This is consistent with the same
+  requirement in web components.
+
+  @class Control
+  @namespace Ember
+  @extends Ember.View
+*/
+Ember.Control = Ember.View.extend({
+  init: function() {
+    this._super();
+    this.set('context', this);
+    this.set('controller', this);
+  }
+});
 
 })();
 
@@ -22822,7 +22925,6 @@ Ember.SelectOption = Ember.View.extend({
 
   ```html
   <select class="ember-select">
-    <option value>Please Select</option>
     <option value="1">Yehuda</option>
     <option value="2">Tom</option>
   </select>
@@ -22855,7 +22957,6 @@ Ember.SelectOption = Ember.View.extend({
 
   ```html
   <select class="ember-select">
-    <option value>Please Select</option>
     <option value="1">Yehuda</option>
     <option value="2" selected="selected">Tom</option>
   </select>
@@ -22893,7 +22994,6 @@ Ember.SelectOption = Ember.View.extend({
 
   ```html
   <select class="ember-select">
-    <option value>Please Select</option>
     <option value="1">Yehuda</option>
     <option value="2" selected="selected">Tom</option>
   </select>
@@ -23161,8 +23261,8 @@ function program3(depth0,data) {
     var selection = get(this, 'selection');
     var value = get(this, 'value');
 
-    if (selection) { this.selectionDidChange(); }
-    if (value) { this.valueDidChange(); }
+    if (!Ember.isNone(selection)) { this.selectionDidChange(); }
+    if (!Ember.isNone(value)) { this.valueDidChange(); }
 
     this._change();
   },
@@ -23359,6 +23459,43 @@ function bootstrap() {
   Ember.Handlebars.bootstrap( Ember.$(document) );
 }
 
+function registerControls(container) {
+  var templates = Ember.TEMPLATES, match;
+  if (!templates) { return; }
+
+  for (var prop in templates) {
+    if (match = prop.match(/^controls\/(.*)$/)) {
+      registerControl(container, match[1]);
+    }
+  }
+}
+
+function registerControl(container, name) {
+  Ember.assert("You provided a template named 'controls/" + name + "', but custom controls must include a '-'", name.match(/-/));
+
+  var className = name.replace(/-/g, '_');
+  var Control = container.lookupFactory('control:' + className) || container.lookupFactory('control:' + name);
+  var View = Control || Ember.Control.extend();
+
+  View.reopen({
+    layoutName: 'controls/' + name
+  });
+
+  Ember.Handlebars.helper(name, View);
+}
+
+// Analogous to document.register in Web Components
+Ember.register = function(name, Class) {
+  var proto = Class.proto();
+  if (!proto.layoutName && !proto().templateName) {
+    Class.reopen({
+      layoutName: 'controls/' + name
+    });
+  }
+
+  Ember.Handlebars.helper(name, Class);
+};
+
 /*
   We tie this to application.load to ensure that we've at least
   attempted to bootstrap at the point that the application is loaded.
@@ -23370,7 +23507,23 @@ function bootstrap() {
   from the DOM after processing.
 */
 
-Ember.onLoad('application', bootstrap);
+Ember.onLoad('Ember.Application', function(Application) {
+  if (Application.initializer) {
+    Application.initializer({
+      name: 'domTemplates',
+      initialize: bootstrap
+    });
+
+    Application.initializer({
+      name: 'registerControls',
+      after: 'domTemplates',
+      initialize: registerControls
+    });
+  } else {
+    // for ember-old-router
+    Ember.onLoad('application', bootstrap);
+  }
+});
 
 })();
 
@@ -26018,14 +26171,18 @@ Ember.Route = Ember.Object.extend({
   */
   modelFor: function(name) {
 
+    var route = this.container.lookup('route:' + name),
+        transition = this.router.router.activeTransition;
+
     // If we are mid-transition, we want to try and look up
     // resolved parent contexts on the current transitionEvent.
-    var transition = this.router.router.activeTransition;
     if (transition) {
-      return transition.resolvedModels[name];
+      var modelLookupName = (route && route.routeName) || name;
+      if (transition.resolvedModels.hasOwnProperty(modelLookupName)) {
+        return transition.resolvedModels[modelLookupName];
+      }
     }
 
-    var route = this.container.lookup('route:' + name);
     return route && route.currentModel;
   },
 
@@ -27285,10 +27442,12 @@ if (Ember.ENV.EXPERIMENTAL_CONTROL_HELPER) {
       childView.rerender();
     }
 
-    Ember.addObserver(this, modelPath, observer);
-    childView.one('willDestroyElement', this, function() {
-      Ember.removeObserver(this, modelPath, observer);
-    });
+    if (modelPath) {
+      Ember.addObserver(this, modelPath, observer);
+      childView.one('willDestroyElement', this, function() {
+        Ember.removeObserver(this, modelPath, observer);
+      });
+    }
 
     Ember.Handlebars.helpers.view.call(this, childView, options);
   });
@@ -29116,8 +29275,6 @@ var get = Ember.get, set = Ember.set;
 */
 Ember.State = Ember.Object.extend(Ember.Evented,
 /** @scope Ember.State.prototype */{
-  isState: true,
-
   /**
     A reference to the parent state.
 
@@ -29227,20 +29384,24 @@ Ember.State = Ember.Object.extend(Ember.Evented,
 
   setupChild: function(states, name, value) {
     if (!value) { return false; }
+    var instance;
 
-    if (value.isState) {
+    if (value instanceof Ember.State) {
       set(value, 'name', name);
+      instance = value;
+      instance.container = this.container;
     } else if (Ember.State.detect(value)) {
-      value = value.create({
-        name: name
+      instance = value.create({
+        name: name,
+        container: this.container
       });
     }
 
-    if (value.isState) {
-      set(value, 'parentState', this);
-      get(this, 'childStates').pushObject(value);
-      states[name] = value;
-      return value;
+    if (instance instanceof Ember.State) {
+      set(instance, 'parentState', this);
+      get(this, 'childStates').pushObject(instance);
+      states[name] = instance;
+      return instance;
     }
   },
 
@@ -30719,7 +30880,7 @@ function wait(app, value) {
         Test.adapter.asyncEnd();
       }
 
-      Ember.run(resolve, value);
+      Ember.run(null, resolve, value);
     }, 10);
   });
 
