@@ -6,7 +6,7 @@ App.ApplicationController = Ember.Controller.extend({
       Ember.Object.create({
         title: 'Home',
         path: 'index',
-        args:undefined
+        args: undefined
       })
     ]);
   }.property()

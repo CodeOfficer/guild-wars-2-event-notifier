@@ -14,6 +14,6 @@ App.WorldsController = Ember.Controller.extend({
     }));
 
     return breadcrumbs;
-  }.property('controllers.application.breadcrumbs', 'content')
+  }.property('controllers.application.breadcrumbs')
 
 });
