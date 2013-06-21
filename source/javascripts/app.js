@@ -16,8 +16,14 @@ App = Ember.Application.create({
   rootElement: '#app',
 
   ready: function(){
-    // load settings from localstorage, an initial call is required for some reason
-    App.Setting.find();
+    // create default settings in from localstorage if needed
+    if (App.Setting.all().get('length') === 0) {
+      return App.Setting.createRecord({
+        id: 'settings',
+        region: 'NA',
+        interval: 5
+      }).save();
+    }
   },
 
   lookupStore: function() {
