@@ -1,5 +1,5 @@
 
-App.World = DS.Model.extend({
+App.WorldName = DS.Model.extend({
   name: DS.attr('string'),
 
   region: function() {

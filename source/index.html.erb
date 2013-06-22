@@ -3,3 +3,19 @@ title: Guild Wars 2 App
 ---
 
 <div id="app"></div>
+
+<script>
+  $(function() {
+    var promises = [
+      App.WorldName.find({}),
+      App.EventName.find({}),
+      App.MapName.find({})
+    ];
+
+    $.when.apply(null, promises).then(function() {
+      App.advanceReadiness();
+    }, function(){
+      alert('HOUSTON, THERE WAS A PROBLEM!')
+    });
+  });
+</script>
