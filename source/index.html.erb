@@ -6,6 +6,8 @@ title: Guild Wars 2 App
 
 <script>
   $(function() {
+    console.log(Ember.keys(App.Router.router.recognizer.names));
+
     App.WorldName.find({}).then(function(){
       App.EventName.find({}).then(function(){
         App.MapName.find({}).then(function(){
