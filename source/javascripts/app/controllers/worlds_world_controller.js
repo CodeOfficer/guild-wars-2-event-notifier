@@ -3,6 +3,10 @@ App.WorldsWorldController = Ember.ObjectController.extend({
 
   needs: ['worlds'],
 
+  // this needs to be here or ember tries to set 'breadcrmbs' on the
+  // proxy's object, and not on the object proxy.
+  breadcrumbs: null,
+
   breadcrumbs: function() {
     var trail = this.get('controllers.worlds.breadcrumbs');
     var breadcrumbs = Ember.A();
