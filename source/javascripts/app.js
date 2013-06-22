@@ -16,6 +16,8 @@ App = Ember.Application.create({
   rootElement: '#app',
 
   ready: function(){
+    console.log('App.ready()')
+
     // create default settings in from localstorage if needed
     if (App.Setting.all().get('length') === 0) {
       return App.Setting.createRecord({

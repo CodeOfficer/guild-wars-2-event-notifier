@@ -8,9 +8,8 @@ App.WorldsWorldRoute = Ember.Route.extend({
 
   setupController: function(controller,model) {
     console.log('WorldsWorldRoute#setupController');
-    this._super(controller,model);
-    // debugger
-    controller.set('events', App.Event.find({world_id: model.get('id')}));
+    controller.set('mapNames', App.MapName.find());
+    return this._super(controller,model);
   }
 
 });
