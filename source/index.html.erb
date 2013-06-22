@@ -6,16 +6,25 @@ title: Guild Wars 2 App
 
 <script>
   $(function() {
-    var promises = [
-      App.WorldName.find({}),
-      App.EventName.find({}),
-      App.MapName.find({})
-    ];
-
-    $.when.apply(null, promises).then(function() {
-      App.advanceReadiness();
-    }, function(){
-      alert('HOUSTON, THERE WAS A PROBLEM!')
+    App.WorldName.find({}).then(function(){
+      App.EventName.find({}).then(function(){
+        App.MapName.find({}).then(function(){
+          App.advanceReadiness();
+        });
+      });
     });
+
+    // var promises = [
+    //   App.WorldName.find(),
+    //   App.EventName.find(),
+    //   App.MapName.find()
+    // ];
+
+    // $.when.apply(null, promises).done(function() {
+    //   console.log('App.advanceReadiness()')
+    //   App.advanceReadiness();
+    // }).fail(function(){
+    //   alert('HOUSTON, THERE WAS A PROBLEM!')
+    // });
   });
 </script>
