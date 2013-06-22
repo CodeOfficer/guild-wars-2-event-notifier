@@ -1,3 +1,6 @@
+# list all routes
+
+Ember.keys(App.Router.router.recognizer.names)
 
 # fetching the latest files
 
