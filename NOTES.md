@@ -52,3 +52,7 @@ integration testing
 http://ianpetzer.wordpress.com/2013/06/14/getting-started-with-integration-testing-ember-js-using-ember-testing-and-qunit-rails/
 
 http://blog.mrloop.com/blog/2013/04/07/ember-data-and-the-meetup-api/
+
+
+https://github.com/emberjs/ember.js/issues/1793
+https://github.com/emberjs/ember.js/pull/2438

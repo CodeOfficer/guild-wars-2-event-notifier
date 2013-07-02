@@ -5,7 +5,7 @@
 
 {{#each mapName in mapNames}}
   <div>
-    {{mapName.name}}
+    {{#linkTo "map" mapName}}{{mapName.name}}{{/linkTo}}
   </div>
 {{else}}
   <div>No maps found</div>

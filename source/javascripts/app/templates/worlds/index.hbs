@@ -3,7 +3,7 @@
 
 {{#each world in controller}}
   <div>
-    {{world.region}} - {{#linkTo "worlds.world" world}}{{world.name}}{{/linkTo}}
+    {{world.region}} - {{#linkTo "world" world}}{{world.name}}{{/linkTo}}
   </div>
 {{else}}
   <div>No worlds found</div>

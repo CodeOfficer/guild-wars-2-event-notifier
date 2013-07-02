@@ -40,7 +40,7 @@ App = Ember.Application.create({
     return this.__container__.lookup('controller:' + controllerName, options);
   },
 
-  lookupContainer: function(){
+  lookupContainer: function() {
     return this.__container__;
   }
 });

@@ -1,7 +1,16 @@
 
-App.Router.map(function(){
+App.Router.map(function() {
   this.resource('worlds', function() {
-    this.route('world', {path: ':world_id'});
+    this.resource('world', {path: ':world_id'}, function() {
+      this.resource('maps', function() {
+        this.resource('map', {path: ':map_id'}, function() {
+          this.resource('events', function() {
+            this.resource('event', {path: ':event_id'}, function() {});
+          });
+        });
+      });
+    });
   });
-  this.resource('settings', function() {})
+
+  this.resource('settings', function() {});
 });

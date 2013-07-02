@@ -1,5 +1,5 @@
 
-App.WorldsWorldController = Ember.ObjectController.extend({
+App.WorldIndexController = Ember.ObjectController.extend({
 
   needs: ['worlds'],
 
@@ -16,7 +16,7 @@ App.WorldsWorldController = Ember.ObjectController.extend({
     breadcrumbs.pushObjects(trail);
     breadcrumbs.pushObject(Ember.Object.create({
       title: this.get('content.name'),
-      path: 'worlds.world',
+      path: 'world',
       args:[this.get('content')]
     }));
 
