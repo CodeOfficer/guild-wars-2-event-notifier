@@ -3,11 +3,3 @@
 
 <h1>{{name}}</h1>
 
-{{#each mapName in mapNames}}
-  <div>
-    {{#linkTo "map" mapName}}{{mapName.name}}{{/linkTo}}
-  </div>
-{{else}}
-  <div>No maps found</div>
-{{/each}}
-
