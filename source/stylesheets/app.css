@@ -1,2 +1,9 @@
 
 @charset "utf-8";
+
+@media (min-width: 700px) {
+  .nav-collapse.collapse {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}

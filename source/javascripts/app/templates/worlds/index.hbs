@@ -1,9 +1,9 @@
 
 {{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
 
-{{#each world in controller}}
+{{#each world in this}}
   <div>
-    {{world.region}} - {{#linkTo "world" world}}{{world.name}}{{/linkTo}}
+    {{world.region}} - {{#linkTo "maps" world}}{{world.name}}{{/linkTo}}
   </div>
 {{else}}
   <div>No worlds found</div>

@@ -1,0 +1,13 @@
+
+{{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
+
+<h1>{{name}}</h1>
+
+{{#each event in events}}
+  <div>
+    {{#linkTo "event.index" event.eventName}}{{event.eventName.name}}{{/linkTo}}
+  </div>
+{{else}}
+  <div>No events found</div>
+{{/each}}
+

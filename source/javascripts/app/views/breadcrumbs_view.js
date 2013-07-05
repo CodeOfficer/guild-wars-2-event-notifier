@@ -4,11 +4,14 @@ App.BreadcrumbsView =  Bootstrap.Breadcrumb.extend({
   gotoRoute: function(content) {
     var path = content.get('path');
     var args = content.get('args');
+    var controller = this.get('parentView.controller');
+    var transitionToRoute = controller.transitionToRoute;
 
     if (Ember.isArray(args)) {
-      this.get('parentView.controller').transitionToRoute(path, args);
+      args.unshift(path);
+      transitionToRoute.apply(controller, args);
     } else {
-      this.get('parentView.controller').transitionToRoute(path);
+      transitionToRoute.call(controller, path);
     }
   },
 

@@ -1,0 +1,10 @@
+
+{{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
+
+{{#each map in this}}
+  <div>
+    {{!#linkTo "events" world map}}{{map.name}}{{!/linkTo}}
+  </div>
+{{else}}
+  <div>No maps found</div>
+{{/each}}

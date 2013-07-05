@@ -8,7 +8,7 @@ App.WorldIndexRoute = Ember.Route.extend({
 
   setupController: function(controller,model) {
     console.log('WorldIndexRoute#setupController');
-    controller.set('mapNames', App.MapName.find());
+    // controller.set('mapNames', App.MapName.find());
     return this._super(controller,model);
   }
 

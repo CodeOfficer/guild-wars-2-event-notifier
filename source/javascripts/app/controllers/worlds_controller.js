@@ -1,5 +1,5 @@
 
-App.WorldsController = Ember.Controller.extend({
+App.WorldsController = Ember.ArrayController.extend({
 
   needs: ['application'],
 
