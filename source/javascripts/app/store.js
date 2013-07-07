@@ -7,8 +7,6 @@ App.JSONSerializer = DS.JSONSerializer.extend({
     var root = this.rootForType(type);
     root = this.pluralize(root);
 
-    // debugger
-
     this.extractMeta(loader, type, json);
 
     if (json[root]) {
@@ -54,11 +52,6 @@ App.RESTAdapter.map('App.Event', {
   mapName: {key: 'map_id'},
   worldName: {key: 'world_id'}
 });
-
-// App.RESTAdapter.configure('plurals', {
-//   world: 'world_names',
-//   event: 'event_names'
-// });
 
 App.Store = DS.Store.extend({
   adapter: App.RESTAdapter.create()

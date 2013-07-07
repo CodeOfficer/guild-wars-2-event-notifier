@@ -9,6 +9,8 @@ App.MapsIndexController = Ember.ArrayController.extend({
   // proxy's object, and not on the object proxy.
   breadcrumbs: null,
 
-  breadcrumbsBinding: 'controllers.maps.breadcrumbs'
+  breadcrumbsBinding: 'controllers.maps.breadcrumbs',
+
+  worldBinding: 'controllers.maps.world'
 
 });

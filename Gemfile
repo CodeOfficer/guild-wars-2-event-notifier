@@ -6,6 +6,7 @@ source 'http://rubygems.org'
 # 1.0.9 gets lodaded unless we specifiy 1.0.0.rcX here
 # http://rubygems.org/gems/handlebars-source
 gem "handlebars-source", "1.0.0.rc4"
+# gem "handlebars-source", "1.0.12"
 
 gem "middleman", "~>3.0.14"
 

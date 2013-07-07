@@ -4,6 +4,9 @@ Ember.keys(App.Router.router.recognizer.names)
 
 # fetching the latest files
 
+newest handlebars?
+# wget -O source/javascripts/vendor/handlebars.js https://raw.github.com/wycats/handlebars.js/1.0.0/dist/handlebars.js
+
 wget -O source/javascripts/vendor/fastclick.js https://raw.github.com/ftlabs/fastclick/master/lib/fastclick.js
 wget -O source/javascripts/vendor/jquery.js http://code.jquery.com/jquery-2.0.0.js
 wget -O source/javascripts/vendor/handlebars.js http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0-rc.4.js
@@ -56,3 +59,8 @@ http://blog.mrloop.com/blog/2013/04/07/ember-data-and-the-meetup-api/
 
 https://github.com/emberjs/ember.js/issues/1793
 https://github.com/emberjs/ember.js/pull/2438
+
+
+http://discuss.emberjs.com/t/ember-rc-5-is-not-working-properly-with-handlebars-1-0-0/1391/12
+
+http://progfu.com/post/40016169330/how-to-find-a-model-by-any-attribute-in-ember-js

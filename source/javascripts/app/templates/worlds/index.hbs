@@ -1,10 +1,31 @@
 
 {{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
 
-{{#each this}}
-  <div>
-    {{region}} - {{#linkTo "maps" this}}{{name}}{{/linkTo}}
+
+<div class="row-fluid">
+  <div class="span6">
+
+    <h2>North America</h2>
+    {{#each americanWorldNames}}
+      <div>
+        {{#linkTo "maps" this}}{{name}}{{/linkTo}}
+      </div>
+    {{else}}
+      <div>No worlds found</div>
+    {{/each}}
+
   </div>
-{{else}}
-  <div>No worlds found</div>
-{{/each}}
+  <div class="span6">
+
+    <h2>Europe</h2>
+    {{#each europeanWorldNames}}
+      <div>
+        {{#linkTo "maps" this}}{{name}}{{/linkTo}}
+      </div>
+    {{else}}
+      <div>No worlds found</div>
+    {{/each}}
+
+  </div>
+</div>
+

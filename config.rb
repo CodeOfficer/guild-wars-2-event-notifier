@@ -2,6 +2,12 @@ MiddlemanEmber::HandlebarsTemplate.options = {
   template_path: "app/templates"
 }
 
+# activate :ember do |ember|
+#   ember.handlebars_path = "app/vendor/handlebars.js"
+#   ember.ember_path      = "app/vendor/ember-latest.js"
+#   ember.ember_data_path = "app/vendor/ember-data-latest.js"
+# end
+
 ###
 # Compass
 ###

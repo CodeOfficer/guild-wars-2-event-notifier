@@ -10,10 +10,13 @@ App.MapsController = Ember.ArrayController.extend({
     breadcrumbs.pushObjects(trail);
     breadcrumbs.pushObject(Ember.Object.create({
       title: 'Maps',
-      path: 'maps'
+      path: 'maps',
+      args:[this.get('controllers.world.content')]
     }));
 
     return breadcrumbs;
-  }.property('controllers.world.breadcrumbs')
+  }.property('controllers.world.breadcrumbs', 'controllers.world.content'),
+
+  worldBinding: 'controllers.world.content'
 
 });
