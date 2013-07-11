@@ -6,7 +6,6 @@ App.EventRoute = Ember.Route.extend({
   },
 
   model: function(params) {
-    console.log('EventRoute#model');
     var world = this.modelFor('world');
     var map = this.modelFor('map');
 
