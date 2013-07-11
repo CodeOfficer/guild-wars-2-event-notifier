@@ -8,7 +8,7 @@ App.BreadcrumbsView =  Bootstrap.Breadcrumb.extend({
     var transitionToRoute = controller.transitionToRoute;
 
     if (Ember.isArray(args)) {
-      // huh? wtfbbq?
+      // TODO huh? wtfbbq? investigate
       if (args[0] !== path) {
         args.unshift(path);
       }
