@@ -5,10 +5,7 @@ App.WorldsIndexController = Ember.ArrayController.extend({
 
   sortProperties: ['name'],
 
-  // this needs to be here or ember tries to set 'breadcrumbs' on the
-  // proxy's object, and not on the object proxy.
-  breadcrumbs: null,
-  breadcrumbsBinding: 'controllers.worlds.breadcrumbs',
+  breadcrumbs: Ember.computed.alias('controllers.worlds.breadcrumbs'),
 
   europeanWorldNames: function() {
     var content = this.get('arrangedContent');

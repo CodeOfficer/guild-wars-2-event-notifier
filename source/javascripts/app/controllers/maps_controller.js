@@ -3,6 +3,8 @@ App.MapsController = Ember.ArrayController.extend({
 
   needs: ['world'],
 
+  world: Ember.computed.alias('controllers.world.content'),
+
   breadcrumbs: function() {
     var trail = this.get('controllers.world.breadcrumbs');
     var breadcrumbs = Ember.A();
@@ -15,8 +17,6 @@ App.MapsController = Ember.ArrayController.extend({
     }));
 
     return breadcrumbs;
-  }.property('controllers.world.breadcrumbs', 'controllers.world.content'),
-
-  worldBinding: 'controllers.world.content'
+  }.property('controllers.world.breadcrumbs', 'controllers.world.content')
 
 });

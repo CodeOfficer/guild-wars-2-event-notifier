@@ -3,6 +3,9 @@ App.EventController = Ember.ObjectController.extend({
 
   needs: ['world', 'map', 'events'],
 
+  map: Ember.computed.alias('controllers.map.content'),
+  world: Ember.computed.alias('controllers.world.content'),
+
   breadcrumbs: function() {
     var trail = this.get('controllers.events.breadcrumbs');
     var breadcrumbs = Ember.A();
@@ -15,12 +18,6 @@ App.EventController = Ember.ObjectController.extend({
     }));
 
     return breadcrumbs;
-  }.property('controllers.world.content', 'controllers.map.content', 'controllers.events.breadcrumbs', 'content'),
-
-  world: null,
-  worldBinding: 'controllers.world.content',
-
-  map: null,
-  mapBinding: 'controllers.map.content'
+  }.property('controllers.world.content', 'controllers.map.content', 'controllers.events.breadcrumbs', 'content')
 
 });

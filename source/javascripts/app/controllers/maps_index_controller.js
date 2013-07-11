@@ -5,12 +5,8 @@ App.MapsIndexController = Ember.ArrayController.extend({
 
   sortProperties: ['name'],
 
-  // this needs to be here or ember tries to set 'breadcrumbs' on the
-  // proxy's object, and not on the object proxy.
-  breadcrumbs: null,
+  breadcrumbs: Ember.computed.alias('controllers.maps.breadcrumbs'),
 
-  breadcrumbsBinding: 'controllers.maps.breadcrumbs',
-
-  worldBinding: 'controllers.maps.world'
+  world: Ember.computed.alias('controllers.maps.world')
 
 });
