@@ -24,11 +24,11 @@ App = Ember.Application.create({
 
     // create default settings in from localstorage if needed
     if (App.Setting.all().get('length') === 0) {
-      return App.Setting.createRecord({
-        id: 'settings',
-        region: 'NA',
-        interval: 5
-      }).save();
+      // return App.Setting.createRecord({
+      //   id: 'settings',
+      //   region: 'NA',
+      //   interval: 5
+      // }).save();
     }
   },
 

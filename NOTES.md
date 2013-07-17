@@ -51,7 +51,7 @@ https://github.com/thomasboyt/data/commit/249f60adbb80ec24a3e7739ce3892711588f7d
 async router
 https://gist.github.com/machty/5723945
 
-integration testing
+integration testing ••••
 http://ianpetzer.wordpress.com/2013/06/14/getting-started-with-integration-testing-ember-js-using-ember-testing-and-qunit-rails/
 
 http://blog.mrloop.com/blog/2013/04/07/ember-data-and-the-meetup-api/
@@ -64,3 +64,7 @@ https://github.com/emberjs/ember.js/pull/2438
 http://discuss.emberjs.com/t/ember-rc-5-is-not-working-properly-with-handlebars-1-0-0/1391/12
 
 http://progfu.com/post/40016169330/how-to-find-a-model-by-any-attribute-in-ember-js
+
+https://github.com/cjohansen/Sinon.JS/issues/284
+
+
