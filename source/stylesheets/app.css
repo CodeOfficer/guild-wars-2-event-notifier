@@ -1,9 +1,23 @@
+/*
+  *= require app/menomonia.css
+  *= require app/menomonia-italic.css
+*/
 
 @charset "utf-8";
 
+/* remove later*/
 @media (min-width: 700px) {
   .nav-collapse.collapse {
     height: auto !important;
     overflow: visible !important;
   }
+}
+
+/* remove later*/
+#map {
+  height: 500px;
+}
+
+body {
+  font-family: "Menomonia";
 }

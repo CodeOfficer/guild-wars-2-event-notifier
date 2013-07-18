@@ -67,4 +67,5 @@ http://progfu.com/post/40016169330/how-to-find-a-model-by-any-attribute-in-ember
 
 https://github.com/cjohansen/Sinon.JS/issues/284
 
-
+gw2 map example
+http://jsfiddle.net/cliff/CRRGC/
