@@ -76,6 +76,16 @@ App.RESTAdapter = DS.RESTAdapter.extend({
   }
 });
 
+App.RESTAdapter.registerTransform('raw', {
+  serialize: function(value) {
+    return value;
+  },
+
+  deserialize: function(value) {
+    return value;
+  }
+});
+
 App.RESTAdapter.map('App.Event', {
   eventName: {key: 'event_id'},
   eventDetail: {key: 'event_id'},
