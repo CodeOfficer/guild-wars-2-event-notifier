@@ -10,3 +10,10 @@
 <div>state: {{state}}</div>
 
 <div>level: {{eventDetail.level}}</div>
+
+<div>mapName: {{mapName.name}}</div>
+<div>map: {{map}}</div>
+
+App.Event.all().get('firstObject.map');
+
+{{view App.WorldMapView continent_id=1 floor_id=1}}

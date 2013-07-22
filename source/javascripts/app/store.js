@@ -38,6 +38,18 @@ App.JSONSerializer = DS.JSONSerializer.extend({
       var objects = json[root], references = [];
       if (records) { records = records.toArray(); }
 
+      // Our GW2 api returns more shittastic json
+      // {"continents": {"1": {"name": "Tyria"}, "2": {"name": "Tyria"}}}
+      if (type === App.Continent) {
+        var array = [];
+        Ember.keys(objects).forEach(function(key) {
+          var object = objects[key];
+          object.id = key;
+          array.push(object)
+        });
+        objects = array;
+      }
+
       for (var i = 0; i < objects.length; i++) {
         if (records) { loader.updateId(records[i], objects[i]); }
         var reference = this.extractRecordRepresentation(loader, type, objects[i]);
@@ -68,6 +80,10 @@ App.RESTAdapter = DS.RESTAdapter.extend({
   namespace: 'v1',
 
   buildURL: function(record, suffix) {
+    if (record === "map") {
+      return this._super(record) + ".json?map_id=%@".fmt(suffix);
+    }
+
     if (record === "event_detail") {
       return this._super(record) + ".json?event_id=%@".fmt(suffix);
     }
