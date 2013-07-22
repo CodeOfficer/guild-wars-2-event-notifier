@@ -5,6 +5,6 @@ App.MapIndexController = Ember.ObjectController.extend({
 
   breadcrumbs: Ember.computed.alias('controllers.map.breadcrumbs'),
 
-  world: Ember.computed.alias('controllers.map.world')
+  breadcrumbWorld: Ember.computed.alias('controllers.map.breadcrumbWorld')
 
 });

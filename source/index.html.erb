@@ -9,8 +9,7 @@ title: Guild Wars 2 App
     var promises = [
       App.WorldName.find({}),
       App.EventName.find({}),
-      App.MapName.find({}),
-      App.Continent.find({})
+      App.MapName.find({})
     ];
 
     Ember.RSVP.all(promises).then(function() {

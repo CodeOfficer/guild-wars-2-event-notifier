@@ -3,7 +3,7 @@ App.MapController = Ember.ObjectController.extend({
 
   needs: ['world', 'maps'],
 
-  world: Ember.computed.alias('controllers.world.content'),
+  breadcrumbWorld: Ember.computed.alias('controllers.world.content'),
 
   breadcrumbs: function() {
     var trail = this.get('controllers.maps.breadcrumbs');

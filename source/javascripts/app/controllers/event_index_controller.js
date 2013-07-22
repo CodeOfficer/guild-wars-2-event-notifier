@@ -5,7 +5,7 @@ App.EventIndexController = Ember.ObjectController.extend({
 
   breadcrumbs: Ember.computed.alias('controllers.event.breadcrumbs'),
 
-  map: Ember.computed.alias('controllers.event.map'),
-  world: Ember.computed.alias('controllers.event.world')
+  breadcrumbMap: Ember.computed.alias('controllers.event.breadcrumbMap'),
+  breadcrumbWorld: Ember.computed.alias('controllers.event.breadcrumbWorld')
 
 });
