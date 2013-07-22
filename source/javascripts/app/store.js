@@ -20,6 +20,13 @@ App.JSONSerializer = DS.JSONSerializer.extend({
         json.event_id = event_id;
       }
 
+      if (type === App.Map) {
+        var map_id = Ember.keys(json.maps)[0];
+
+        json = json.maps[map_id];
+        json.map_id = map_id;
+      }
+
       if (record) { loader.updateId(record, json); }
       this.extractRecordRepresentation(loader, type, json);
     }
