@@ -1,7 +1,22 @@
 
 App.JSONSerializer = DS.JSONSerializer.extend({
 
-  // Our GW2 api does not sideload and returns some really shittastic up json
+  extractEmbeddedData: function(hash, key) {
+    debugger
+    // convert {"1", {}, "2", {}} to [{"id": 1}, {"id": 2}]
+    if (['regions', 'maps'].contains(key)) {
+      var json = hash[key];
+      return Ember.keys(json).map(function(id) {
+        var object = json[id];
+        object.id = id;
+        return object;
+      });
+    }
+
+    return this._super(hash, key);
+  },
+
+  // Our GW2 api does not sideload and returns some really shittastic  json
   extract: function(loader, json, type, record) {
     var root = this.rootForType(type);
 
@@ -18,6 +33,13 @@ App.JSONSerializer = DS.JSONSerializer.extend({
 
         json = json.events[event_id];
         json.event_id = event_id;
+      }
+
+      if (type === App.Map) {
+        var map_id = Ember.keys(json.maps)[0];
+
+        json = json.maps[map_id];
+        json.id = map_id;
       }
 
       if (record) { loader.updateId(record, json); }
@@ -38,6 +60,25 @@ App.JSONSerializer = DS.JSONSerializer.extend({
       var objects = json[root], references = [];
       if (records) { records = records.toArray(); }
 
+      // Our GW2 api returns more shittastic json
+      // {"continents": {"1": {"name": "Tyria"}, "2": {"name": "Tyria"}}}
+      if (type === App.Continent) {
+        var array = [];
+        Ember.keys(objects).forEach(function(key) {
+          var object = objects[key];
+          object.id = key;
+          array.push(object)
+        });
+        objects = array;
+      }
+
+      // give Event a composite primary key
+      if (type === App.Event) {
+        json.events.forEach(function(event, i, events) {
+          events[i].id = [event.world_id, event.map_id, event.event_id].join('.');
+        });
+      }
+
       for (var i = 0; i < objects.length; i++) {
         if (records) { loader.updateId(records[i], objects[i]); }
         var reference = this.extractRecordRepresentation(loader, type, objects[i]);
@@ -48,6 +89,10 @@ App.JSONSerializer = DS.JSONSerializer.extend({
     } else {
       var objects = json, references = [];
       if (records) { records = records.toArray(); }
+
+      if (type === App.MapFloor) {
+        objects = [json];
+      }
 
       for (var i = 0; i < objects.length; i++) {
         if (records) { loader.updateId(records[i], objects[i]); }
@@ -67,7 +112,75 @@ App.RESTAdapter = DS.RESTAdapter.extend({
 
   namespace: 'v1',
 
+  find: function(store, type, id) {
+    var root = this.rootForType(type), adapter = this;
+    var params = '',
+          continent_id, floor_id;
+
+    // App.MapFloor.find('1.2')
+    if (type === App.MapFloor) {
+      values = id.split('.');
+      continent_id = values[0];
+      floor_id = values[1];
+      params = "continent_id=%@&floor=%@".fmt(continent_id, floor_id);
+    }
+
+    return this.ajax(this.buildURL(root, id) + params, "GET").
+      then(function(json){
+
+        if (type === App.MapFloor) {
+          json.id = id;
+          json.continent_id = continent_id;
+          json.floor_id = floor_id;
+        }
+
+        adapter.didFindRecord(store, type, json, id);
+    }).then(null, DS.rejectionHandler);
+  },
+
+  findQuery: function(store, type, query, recordArray) {
+    var root = this.rootForType(type),
+    adapter = this;
+    var params = '',
+          continent_id, floor_id;
+
+    // App.MapFloor.find({continent_id: 1, floor_id: 3})
+    if (type === App.MapFloor) {
+      continent_id = query['continent_id'];
+      floor_id = query['floor_id'];
+      params = "continent_id=%@&floor=%@".fmt(continent_id, floor_id);
+      delete query['continent_id'];
+      delete query['floor_id'];
+    }
+
+    return this.ajax(this.buildURL(root) + params, "GET", {
+      data: query
+    }).then(function(json){
+
+      if (type === App.MapFloor) {
+        json.id = continent_id + '.' + floor_id;
+        json.continent_id = continent_id;
+        json.floor_id = floor_id;
+      }
+
+      // if (type === App.Event) {
+      //   json.id = [json.world_id, json.map_id, json.event_id].join('.');
+      //   debugger
+      // }
+
+      adapter.didFindQuery(store, type, json, recordArray);
+    }).then(null, DS.rejectionHandler);
+  },
+
   buildURL: function(record, suffix) {
+    if (record === "map_floor") {
+      return this._super(record) + ".json?";
+    }
+
+    if (record === "map") {
+      return this._super(record) + ".json?map_id=%@".fmt(suffix);
+    }
+
     if (record === "event_detail") {
       return this._super(record) + ".json?event_id=%@".fmt(suffix);
     }
@@ -90,7 +203,21 @@ App.RESTAdapter.map('App.Event', {
   eventName: {key: 'event_id'},
   eventDetail: {key: 'event_id'},
   mapName: {key: 'map_id'},
+  map: {key: 'map_id'},
   worldName: {key: 'world_id'}
+});
+
+App.RESTAdapter.map('App.EventDetail', {
+  map: {key: 'map_id'}
+});
+
+App.RESTAdapter.map('App.MapFloor', {
+  regionData: {key: 'regions'}
+});
+
+
+App.RESTAdapter.configure('plurals', {
+  map_floor: 'map_floor'
 });
 
 App.Store = DS.Store.extend({

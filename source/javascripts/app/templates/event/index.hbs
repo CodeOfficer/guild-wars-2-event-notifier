@@ -10,3 +10,10 @@
 <div>state: {{state}}</div>
 
 <div>level: {{eventDetail.level}}</div>
+
+<div>mapName: {{mapName.name}}</div>
+<div>map_name: {{map.map_name}}</div>
+
+{{#if mapFloor.isLoaded}}
+  {{view App.WorldMapView mapBinding=map mapFloorBinding=mapFloor}}
+{{/if}}

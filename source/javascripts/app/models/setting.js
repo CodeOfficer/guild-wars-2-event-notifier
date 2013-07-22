@@ -1,5 +1,7 @@
 
 App.Setting = DS.Model.extend({
-  region: DS.attr('string'),
-  interval: DS.attr('number')
+
+  interval: DS.attr('number'),
+  region: DS.attr('string')
+
 });

@@ -72,3 +72,11 @@ http://jsfiddle.net/cliff/CRRGC/
 
 http://dragons.udba.org/
 https://forum-en.guildwars2.com/forum/community/api/Dragon-event-chains
+
+MULTIPLE MAP EXAMPLE
+http://gw2.chillerlan.net/examples/gw2maps.html
+http://gw2.chillerlan.net/examples/gw2maps-jquery.html
+
+https://forum-en.guildwars2.com/forum/community/api/Event-Details-API-location-coordinates/first#post2355531
+
+

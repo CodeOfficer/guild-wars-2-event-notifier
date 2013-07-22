@@ -5,7 +5,7 @@
 
 @charset "utf-8";
 
-/* remove later*/
+/* TODO remove */
 @media (min-width: 700px) {
   .nav-collapse.collapse {
     height: auto !important;
@@ -13,11 +13,34 @@
   }
 }
 
-/* remove later*/
-#map {
+/* TODO revisit */
+.map {
   height: 500px;
 }
 
 body {
   font-family: "Menomonia";
+  margin-bottom: 20px;
+}
+
+/* layers control */
+.leaflet-control-layers-toggle {
+  background-image: url('../images/leaflet/layers.png');
+  width: 36px;
+  height: 36px;
+}
+
+.leaflet-retina .leaflet-control-layers-toggle {
+  background-image: url('../mages/leaflet/layers-2x.png');
+  background-size: 26px 26px;
+}
+
+.leaflet-div-icon {
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  color: white;
+  text-align: center;
+  cursor: -webkit-grab;
 }

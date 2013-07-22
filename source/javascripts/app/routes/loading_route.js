@@ -1,12 +1,14 @@
 
 App.LoadingRoute = Ember.Route.extend({
-    enter: function () {
-        console.log(">>> Starting loading.");
-    },
 
-    setup: Ember.K,
+  enter: function () {
+    console.log(">>> Starting loading.");
+  },
 
-    exit: function () {
-        console.log("<<< Finished loading.");
-    }
+  setup: Ember.K,
+
+  exit: function () {
+    console.log("<<< Finished loading.");
+  }
+
 });
