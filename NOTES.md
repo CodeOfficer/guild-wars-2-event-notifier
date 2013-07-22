@@ -69,3 +69,6 @@ https://github.com/cjohansen/Sinon.JS/issues/284
 
 gw2 map example
 http://jsfiddle.net/cliff/CRRGC/
+
+http://dragons.udba.org/
+https://forum-en.guildwars2.com/forum/community/api/Dragon-event-chains

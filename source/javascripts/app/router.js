@@ -13,4 +13,5 @@ App.Router.map(function() {
   });
 
   this.resource('settings', function() {});
+  this.route('api_status');
 });

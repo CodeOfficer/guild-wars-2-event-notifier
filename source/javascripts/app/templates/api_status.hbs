@@ -1,0 +1,8 @@
+<p>Pulled from http://gw2stats.net/status/current</p>
+
+{{#each endpoint in controller}}
+  <div>
+    <span class="label pull-right">{{endpoint.status}}</span>
+    {{endpoint.url}} - {{endpoint.ping}}ms
+  </div>
+{{/each}}
