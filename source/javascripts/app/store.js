@@ -113,7 +113,12 @@ App.RESTAdapter.map('App.Event', {
   eventName: {key: 'event_id'},
   eventDetail: {key: 'event_id'},
   mapName: {key: 'map_id'},
+  map: {key: 'map_id'},
   worldName: {key: 'world_id'}
+});
+
+App.RESTAdapter.map('App.EventDetail', {
+  map: {key: 'map_id'}
 });
 
 App.Store = DS.Store.extend({
