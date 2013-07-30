@@ -1,14 +1,10 @@
 
 App.MapFloor = DS.Model.extend({
-
   regions: DS.hasMany('App.Region'),
 
   continent_id: DS.attr('string'),
   floor_id: DS.attr('string'),
-
-  // regions: DS.attr('raw'),
   texture_dims: DS.attr('raw')
-
 });
 
 // Required parameters:

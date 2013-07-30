@@ -1,9 +1,8 @@
 
 App.Map = DS.Model.extend({
-  points_of_interest: DS.attr('raw'),
-  tasks: DS.attr('raw'),
-  skill_challenges: DS.attr('raw'),
-  sectors: DS.attr('raw'),
+  points_of_interest: DS.hasMany('App.PointOfInterest'),
+  tasks: DS.hasMany('App.Task'),
+  sectors: DS.hasMany('App.Sector'),
 
   map_name: DS.attr('string'),
   min_level: DS.attr('number'),
@@ -15,7 +14,8 @@ App.Map = DS.Model.extend({
   continent_id: DS.attr('number'),
   continent_name: DS.attr('string'),
   map_rect: DS.attr('raw'),
-  continent_rect: DS.attr('raw')
+  continent_rect: DS.attr('raw'),
+  skill_challenges: DS.attr('raw')
 });
 
 // {

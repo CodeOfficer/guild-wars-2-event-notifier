@@ -2,7 +2,6 @@
 App.JSONSerializer = DS.JSONSerializer.extend({
 
   extractEmbeddedData: function(hash, key) {
-
     // convert {"1", {}, "2", {}} to [{"id": 1}, {"id": 2}]
     if (['regions', 'maps'].contains(key)) {
       var json = hash[key];
@@ -10,6 +9,39 @@ App.JSONSerializer = DS.JSONSerializer.extend({
         var object = json[id];
         object.id = id;
         return object;
+      });
+    }
+
+    // rename 'poi_id' to 'id'
+    if (key === "points_of_interest") {
+      var json = hash[key];
+
+      return json.map(function(poi) {
+        poi.id = poi.poi_id;
+        delete poi.poi_id;
+        return poi;
+      });
+    }
+
+    // rename 'task_id' to 'id'
+    if (key === "tasks") {
+      var json = hash[key];
+
+      return json.map(function(task) {
+        task.id = task.task_id;
+        delete task.task_id;
+        return task;
+      });
+    }
+
+    // rename 'sector_id' to 'id'
+    if (key === "sectors") {
+      var json = hash[key];
+
+      return json.map(function(sector) {
+        sector.id = sector.sector_id;
+        delete sector.sector_id;
+        return sector;
       });
     }
 
@@ -197,6 +229,12 @@ App.RESTAdapter.map('App.Event', {
 
 App.RESTAdapter.map('App.EventDetail', {
   map: {key: 'map_id'}
+});
+
+App.RESTAdapter.map('App.Map', {
+  points_of_interest: {embedded: 'load'},
+  sectors: {embedded: 'load'},
+  tasks: {embedded: 'load'}
 });
 
 App.RESTAdapter.map('App.MapFloor', {
