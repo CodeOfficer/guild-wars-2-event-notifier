@@ -1,5 +1,10 @@
 
 App.Map = DS.Model.extend({
+  points_of_interest: DS.attr('raw'),
+  tasks: DS.attr('raw'),
+  skill_challenges: DS.attr('raw'),
+  sectors: DS.attr('raw'),
+
   map_name: DS.attr('string'),
   min_level: DS.attr('number'),
   max_level: DS.attr('number'),
