@@ -8,6 +8,10 @@ window.addEventListener('load', function() {
   new FastClick(document.body);
 }, false);
 
+Ember.RSVP.configure('onerror', function(e) {
+  console.log(e.message);
+  console.log(e.stack);
+});
 
 App = Ember.Application.create({
   // LOG_STACKTRACE_ON_DEPRECATION : true,
