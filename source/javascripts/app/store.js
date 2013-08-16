@@ -12,39 +12,6 @@ App.JSONSerializer = DS.JSONSerializer.extend({
       });
     }
 
-    // rename 'poi_id' to 'id'
-    if (key === "points_of_interest") {
-      var json = hash[key];
-
-      return json.map(function(poi) {
-        poi.id = poi.poi_id;
-        delete poi.poi_id;
-        return poi;
-      });
-    }
-
-    // rename 'task_id' to 'id'
-    if (key === "tasks") {
-      var json = hash[key];
-
-      return json.map(function(task) {
-        task.id = task.task_id;
-        delete task.task_id;
-        return task;
-      });
-    }
-
-    // rename 'sector_id' to 'id'
-    if (key === "sectors") {
-      var json = hash[key];
-
-      return json.map(function(sector) {
-        sector.id = sector.sector_id;
-        delete sector.sector_id;
-        return sector;
-      });
-    }
-
     return this._super(hash, key);
   },
 
@@ -71,7 +38,7 @@ App.JSONSerializer = DS.JSONSerializer.extend({
         var map_id = Ember.keys(json.maps)[0];
 
         json = json.maps[map_id];
-        json.map_id = map_id;
+        json.id = map_id;
       }
 
       if (record) { loader.updateId(record, json); }
@@ -102,6 +69,13 @@ App.JSONSerializer = DS.JSONSerializer.extend({
           array.push(object)
         });
         objects = array;
+      }
+
+      // give Event a composite primary key
+      if (type === App.Event) {
+        json.events.forEach(function(event, i, events) {
+          events[i].id = [event.world_id, event.map_id, event.event_id].join('.');
+        });
       }
 
       for (var i = 0; i < objects.length; i++) {
@@ -188,6 +162,11 @@ App.RESTAdapter = DS.RESTAdapter.extend({
         json.floor_id = floor_id;
       }
 
+      // if (type === App.Event) {
+      //   json.id = [json.world_id, json.map_id, json.event_id].join('.');
+      //   debugger
+      // }
+
       adapter.didFindQuery(store, type, json, recordArray);
     }).then(null, DS.rejectionHandler);
   },
@@ -231,7 +210,7 @@ App.RESTAdapter.map('App.EventDetail', {
   map: {key: 'map_id'}
 });
 
-App.RESTAdapter.map('App.Map', {
+App.RESTAdapter.map('App.MapDetail', {
   points_of_interest: {embedded: 'load'},
   sectors: {embedded: 'load'},
   tasks: {embedded: 'load'}
@@ -242,7 +221,19 @@ App.RESTAdapter.map('App.MapFloor', {
 });
 
 App.RESTAdapter.map('App.Region', {
-  maps: {embedded: 'load'}
+  mapDetails: {key: 'maps', embedded: 'load'}
+});
+
+App.RESTAdapter.configure('App.Task', {
+  primaryKey: 'task_id'
+});
+
+App.RESTAdapter.configure('App.PointOfInterest', {
+  primaryKey: 'poi_id'
+});
+
+App.RESTAdapter.configure('App.Sector', {
+  primaryKey: 'sector_id'
 });
 
 App.RESTAdapter.configure('plurals', {

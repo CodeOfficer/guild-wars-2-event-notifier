@@ -2,6 +2,7 @@
 App.MapFloor = DS.Model.extend({
   regions: DS.hasMany('App.Region'),
 
+  clamped_view: DS.attr('raw'),
   continent_id: DS.attr('string'),
   floor_id: DS.attr('string'),
   texture_dims: DS.attr('raw')

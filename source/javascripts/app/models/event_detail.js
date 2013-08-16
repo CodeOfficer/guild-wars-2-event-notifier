@@ -3,10 +3,10 @@ App.EventDetail = DS.Model.extend({
   event: DS.belongsTo('App.Event'),
   map: DS.belongsTo('App.Map'),
 
-  name: DS.attr('string'),
-  level: DS.attr('number'),
   flags: DS.attr('raw'),
-  location: DS.attr('raw')
+  level: DS.attr('number'),
+  location: DS.attr('raw'),
+  name: DS.attr('string')
 });
 
 // {

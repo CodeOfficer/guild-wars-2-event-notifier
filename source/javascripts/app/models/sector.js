@@ -1,6 +1,8 @@
 
 App.Sector = DS.Model.extend({
-  name: DS.attr('string'),
+  mapDetail: DS.belongsTo('App.MapDetail', {inverse: 'sectors'}),
+
+  coord: DS.attr('raw'),
   level: DS.attr('number'),
-  coord: DS.attr('raw')
+  name: DS.attr('string')
 });

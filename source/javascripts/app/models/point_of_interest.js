@@ -1,7 +1,9 @@
 
 App.PointOfInterest = DS.Model.extend({
-  name: DS.attr('string'),
-  type: DS.attr('string'),
+  mapDetail: DS.belongsTo('App.MapDetail', {inverse: 'points_of_interest'}),
+
+  coord: DS.attr('raw'),
   floor: DS.attr('number'),
-  coord: DS.attr('raw')
+  name: DS.attr('string'),
+  type: DS.attr('string')
 });

@@ -1,20 +1,16 @@
 
 App.Map = DS.Model.extend({
-  points_of_interest: DS.hasMany('App.PointOfInterest'),
-  tasks: DS.hasMany('App.Task'),
-  sectors: DS.hasMany('App.Sector'),
-
-  map_name: DS.attr('string'),
-  min_level: DS.attr('number'),
-  max_level: DS.attr('number'),
-  default_floor: DS.attr('number'),
-  floors: DS.attr('raw'),
-  region_id: DS.attr('number'),
-  region_name: DS.attr('string'),
   continent_id: DS.attr('number'),
   continent_name: DS.attr('string'),
-  map_rect: DS.attr('raw'),
   continent_rect: DS.attr('raw'),
+  default_floor: DS.attr('number'),
+  floors: DS.attr('raw'),
+  map_name: DS.attr('string'),
+  map_rect: DS.attr('raw'),
+  max_level: DS.attr('number'),
+  min_level: DS.attr('number'),
+  region_id: DS.attr('number'),
+  region_name: DS.attr('string'),
   skill_challenges: DS.attr('raw')
 });
 

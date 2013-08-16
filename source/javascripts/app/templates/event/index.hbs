@@ -14,4 +14,6 @@
 <div>mapName: {{mapName.name}}</div>
 <div>map_name: {{map.map_name}}</div>
 
-{{view App.WorldMapView continent_id=1 floor_id=1}}
+{{#if mapFloor.isLoaded}}
+  {{view App.WorldMapView mapBinding=map mapFloorBinding=mapFloor}}
+{{/if}}

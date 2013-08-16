@@ -9,6 +9,9 @@ App.Event = DS.Model.extend({
   state: DS.attr('string')
 });
 
+// we give Event a compisite primary key in the form of:
+// world_id.map_id.event_id
+
 // {
 //   "events": [
 //     {

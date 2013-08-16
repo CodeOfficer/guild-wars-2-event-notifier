@@ -1,7 +1,8 @@
 
 App.Region = DS.Model.extend({
-  name: DS.attr('string'),
-  label_coord: DS.attr('raw'),
+  mapDetails: DS.hasMany('App.MapDetail'),
+  mapFloor: DS.belongsTo('App.MapFloor', {inverse: 'regions'}),
 
-  maps: DS.hasMany('App.Map')
+  label_coord: DS.attr('raw'),
+  name: DS.attr('string')
 });

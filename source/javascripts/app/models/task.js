@@ -1,6 +1,8 @@
 
 App.Task = DS.Model.extend({
-  objective: DS.attr('string'),
+  mapDetail: DS.belongsTo('App.MapDetail', {inverse: 'tasks'}),
+
+  coord: DS.attr('raw'),
   level: DS.attr('number'),
-  coord: DS.attr('raw')
+  objective: DS.attr('string')
 });

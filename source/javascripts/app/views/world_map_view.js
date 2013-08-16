@@ -24,97 +24,209 @@ App.WorldMapView = Ember.View.extend({
   // region_id: null,
   // map_id: null,
 
+  // continent, map, [event, poi, etc]
 
-  tilesUrl: 'https://tiles.guildwars2.com/{continent_id}/{floor_id}/{z}/{x}/{y}.jpg',
+  template: Ember.Handlebars.compile('<div id="map-{{unbound view.elementId}}" class="map"></div>'),
 
-  template: Ember.Handlebars.compile('<div id="map"></div>'),
+  continent_id: function() {
+    var map = this.get('map');
+    return map.get('continent_id');
+  }.property('map.continent_id'),
 
-  northEast: function() {
-    var mapObject = this.get('mapObject');
-    return mapObject.unproject([32768, 0], mapObject.getMaxZoom());
-  }.property('mapObject'),
+  floor_id: function() {
+    var map = this.get('map');
+    return map.get('default_floor');
+  }.property('map.default_floor'),
 
-  southWest: function() {
-    var mapObject = this.get('mapObject');
-    return mapObject.unproject([0, 32768], mapObject.getMaxZoom());
-  }.property('mapObject'),
-
-  mapObject: function() {
-    return new L.map('map', {
-      minZoom: 0,
-      maxZoom: 7,
-      crs: L.CRS.Simple,
-      layers: []
-    }).setView([0, 0], 0);
+  minZoom: function(){
+    return 0;
   }.property(),
 
-  didInsertElement: function() {
-    var mapObject = window.mapObject = this.get('mapObject');
-    var tilesUrl = this.get('tilesUrl');
-    var continent_id = this.get('continent_id');
-    var floor_id = this.get('floor_id');
+  maxZoom: function(){
+    return 7;
+  }.property(),
 
-    var bounds = new L.latLngBounds(this.get('southWest'), this.get('northEast'));
+  bounds: function() {
+    var map = this.get('map');
+    var mapFloor = this.get('mapFloor');
+    var mapObject = this.get('mapObject');
+    var topLeft, bottomRight, bounds, padding;
 
-    mapObject.setMaxBounds(bounds).fitBounds(bounds);
-    // mapObject.setMaxBounds(bounds);
+    if (mapFloor.get('clamped_view')) {
+      console.log('•• [clamped_view]');
+      bounds = mapFloor.get('clamped_view');
+      padding = 0.2;
+    } else if (map) {
+      console.log('[map]');
+      bounds = map.get('continent_rect');
+      padding = 0.2;
+    } else {
+      console.log('[else]');
+      bounds = mapFloor.get('texture_dims');
+      padding = 0.1;
+    }
 
-    var layer = new L.tileLayer(tilesUrl, {
+    topLeft = mapObject.unproject(bounds[0], mapObject.getMaxZoom());
+    bottomRight = mapObject.unproject(bounds[1], mapObject.getMaxZoom());
+
+    return L.latLngBounds(topLeft, bottomRight).pad(padding);
+  }.property('mapObject', 'map.continent_rect', 'mapFloor.clamped_view', 'mapFloor.texture_dims'),
+
+  mapObject: function() {
+    return L.map('map-' + this.get('elementId'), {
+      minZoom: this.get('minZoom'),
+      maxZoom: this.get('maxZoom'),
+      crs: L.CRS.Simple
+    }).setView([0, 0], 0);
+  }.property('elementId', 'minZoom', 'maxZoom'),
+
+  baseLayer: function() {
+    return L.tileLayer('https://tiles.guildwars2.com/{continent_id}/{floor_id}/{z}/{x}/{y}.jpg', {
       // continuousWorld: true,
-      continent_id: continent_id,
-      floor_id: floor_id,
-      minZoom : 0,
-      maxZoom: 7
-    }).addTo(mapObject);
+      continent_id: this.get('continent_id'),
+      floor_id: this.get('floor_id'),
+      minZoom : this.get('minZoom'),
+      maxZoom: this.get('maxZoom')
+    });
+  }.property('continent_id', 'floor_id', 'minZoom', 'maxZoom'),
 
-    var mapFloorUrl = "https://api.guildwars2.com/v1/map_floor.json?continent_id=%@&floor=%@".fmt(continent_id, floor_id);
+  layerGroups: function() {
+    var sectors = L.layerGroup(this.get('sectors'));
+    var skillChallenges = L.layerGroup(this.get('skillChallenges'));
+    var pointsOfInterest = L.layerGroup(this.get('pointsOfInterest'));
 
-    $.getJSON(mapFloorUrl, function (data) {
-        var region, gameMap, i, il, poi;
+    return {
+      'sectors': sectors,
+      'skill challenges': skillChallenges,
+      'points of interest': pointsOfInterest
+    }
+  }.property('pointsOfInterest', 'skillChallenges', 'sectors'),
 
-        for (region in data.regions) {
-            region = data.regions[region];
+  sectors: function() {
+    var self = this;
+    var sectors =[]
 
-            for (gameMap in region.maps) {
-                gameMap = region.maps[gameMap];
+    this.get('mapFloor.regions').forEach(function(region) {
+      var mapDetails = region.get('mapDetails');
 
-                for (i = 0, il = gameMap.points_of_interest.length; i < il; i++) {
-                    poi = gameMap.points_of_interest[i];
+      mapDetails.forEach(function(mapDetail) {
+        mapDetail.get('sectors').forEach(function(sector) {
+          var html = '<div><em>' + sector.get('name') + '</em></div>';
 
-                    // if (poi.type != "waypoint") {
-                    //     continue;
-                    // }
+          if (sector.get('level') > 0) {
+            html += '<div><em>(' + sector.get('level') + ')</em></div>';
+          }
 
-                    var icon = L.icon({
-                        // iconUrl: 'waypoint.png',
-                        // shadowUrl: 'waypoint.png',
+          var mark = self.markerFor(sector.get('coord'), {
+            clickable: false,
+            opacity: 0.7,
+            zIndexOffset: -1000,
+            icon: L.divIcon({
+                html: html,
+                iconSize: [200, 32]
+            })
+          });
 
-                        iconUrl: 'images/leaflet-markers/waypoint.png',
-                        shadowUrl: 'images/leaflet-markers/waypoint.png',
-
-                        iconSize:     [32, 32], // size of the icon
-                        shadowSize:   [32, 32], // size of the shadow
-                        iconAnchor:   [32, 32], // point of the icon which will correspond to marker's location
-                        shadowAnchor: [32, 32],  // the same for the shadow
-                        popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
-                    });
-
-                    // console.log(poi.coord)
-
-                    L.marker(mapObject.unproject(poi.coord), {
-                        // title: poi.name,
-                        icon: icon
-                    }).addTo(mapObject);
-
-
-                    // L.marker(map.unproject(poi.coord), {
-                    //     title: poi.name
-                    // }).addTo(map);
-                }
-            }
-        }
+          sectors.push(mark);
+        });
+      });
     });
 
+    return sectors;
+  }.property('sectors'),
+
+  skillChallenges: function() {
+    var self = this;
+    var skillChallenges =[]
+
+    this.get('mapFloor.regions').forEach(function(region) {
+      var mapDetails = region.get('mapDetails');
+
+      mapDetails.forEach(function(mapDetail) {
+        mapDetail.get('skill_challenges').forEach(function(skillChallenge) {
+          var mark = self.markerFor(skillChallenge.coord, {
+            title: 'Skill Challenge',
+            icon: L.icon({
+                iconUrl: 'images/leaflet-markers/skillchallenge.png',
+                shadowUrl: 'images/leaflet-markers/skillchallenge.png',
+                iconSize:     [20, 20], // size of the icon
+                shadowSize:   [20, 20], // size of the shadow
+                iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+                shadowAnchor: [10, 10],  // the same for the shadow
+                popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
+            })
+          });
+
+          skillChallenges.push(mark);
+        });
+      });
+    });
+
+    return skillChallenges;
+  }.property('mapFloor'),
+
+  pointsOfInterest: function() {
+    var self = this;
+    var pointsOfInterest =[]
+
+    this.get('mapFloor.regions').forEach(function(region) {
+      var mapDetails = region.get('mapDetails');
+
+      mapDetails.forEach(function(mapDetail) {
+        mapDetail.get('points_of_interest').forEach(function(poi) {
+          var type;
+
+          if (poi.get('type') === 'landmark') {
+            type = 'pointofinterest';
+          } else if (poi.get('type') === 'unlock') {
+            type = 'dungeon';
+          } else {
+            type = poi.get('type');
+          }
+
+          var mark = self.markerFor(poi.get('coord'), {
+            title: poi.get('name'),
+            icon: L.icon({
+                iconUrl: 'images/leaflet-markers/%@.png'.fmt(type),
+                shadowUrl: 'images/leaflet-markers/%@.png'.fmt(type),
+                iconSize:     [20, 20], // size of the icon
+                shadowSize:   [20, 20], // size of the shadow
+                iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+                shadowAnchor: [10, 10],  // the same for the shadow
+                popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
+            })
+          });
+
+          if (poi.get('name')) {
+            mark.bindPopup(poi.get('name'));
+          }
+
+          pointsOfInterest.push(mark);
+        });
+      });
+    });
+
+    return pointsOfInterest;
+  }.property('mapFloor'),
+
+  markerFor: function(coordinates, markerOptions) {
+    var mapObject = this.get('mapObject');
+
+    return L.marker(mapObject.unproject(coordinates, this.get('maxZoom')), markerOptions);
+  },
+
+  didInsertElement: function() {
+    var self = window.self = this;
+
+    var mapObject = this.get('mapObject');
+    var mapFloor = this.get('mapFloor');
+    var bounds = this.get('bounds');
+    var baseLayer = this.get('baseLayer');
+    var layerGroups = this.get('layerGroups');
+
+    mapObject.setMaxBounds(bounds).fitBounds(bounds);
+    baseLayer.addTo(mapObject);
+    L.control.layers(null, layerGroups).addTo(mapObject);
   },
 
   willDestroyElement: function() {
