@@ -90,15 +90,11 @@ App.WorldMapView = Ember.View.extend({
     });
   }.property('continent_id', 'floor_id', 'minZoom', 'maxZoom'),
 
-  layerGroups: function() {
-    var sectors = L.layerGroup(this.get('sectors'));
-    var skillChallenges = L.layerGroup(this.get('skillChallenges'));
-    var pointsOfInterest = L.layerGroup(this.get('pointsOfInterest'));
-
+  layers: function() {
     return {
-      'sectors': sectors,
-      'skill challenges': skillChallenges,
-      'points of interest': pointsOfInterest
+      'sectors': this.get('sectors'),
+      'skill challenges': this.get('skillChallenges'),
+      'points of interest': this.get('pointsOfInterest')
     }
   }.property('pointsOfInterest', 'skillChallenges', 'sectors'),
 
@@ -132,7 +128,7 @@ App.WorldMapView = Ember.View.extend({
       });
     });
 
-    return sectors;
+    return L.layerGroup(sectors);
   }.property('sectors'),
 
   skillChallenges: function() {
@@ -162,7 +158,7 @@ App.WorldMapView = Ember.View.extend({
       });
     });
 
-    return skillChallenges;
+    return L.layerGroup(skillChallenges);
   }.property('mapFloor'),
 
   pointsOfInterest: function() {
@@ -206,7 +202,7 @@ App.WorldMapView = Ember.View.extend({
       });
     });
 
-    return pointsOfInterest;
+    return L.layerGroup(pointsOfInterest);
   }.property('mapFloor'),
 
   markerFor: function(coordinates, markerOptions) {
@@ -222,11 +218,17 @@ App.WorldMapView = Ember.View.extend({
     var mapFloor = this.get('mapFloor');
     var bounds = this.get('bounds');
     var baseLayer = this.get('baseLayer');
-    var layerGroups = this.get('layerGroups');
+    var layers = this.get('layers');
+    var sectors = this.get('sectors');
+    var skillChallenges = this.get('skillChallenges');
+    var pointsOfInterest = this.get('pointsOfInterest');
 
     mapObject.setMaxBounds(bounds).fitBounds(bounds);
     baseLayer.addTo(mapObject);
-    L.control.layers(null, layerGroups).addTo(mapObject);
+    mapObject.addLayer(sectors);
+    mapObject.addLayer(skillChallenges);
+    mapObject.addLayer(pointsOfInterest);
+    L.control.layers(null, layers).addTo(mapObject);
   },
 
   willDestroyElement: function() {
