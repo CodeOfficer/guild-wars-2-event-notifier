@@ -102,31 +102,31 @@ App.WorldMapView = Ember.View.extend({
     var self = this;
     var sectors =[]
 
-    this.get('mapFloor.regions').forEach(function(region) {
-      var mapDetails = region.get('mapDetails');
+    // this.get('mapFloor.regions').forEach(function(region) {
+    //   var mapDetails = region.get('mapDetails');
 
-      mapDetails.forEach(function(mapDetail) {
-        mapDetail.get('sectors').forEach(function(sector) {
-          var html = '<div><em>' + sector.get('name') + '</em></div>';
+    //   mapDetails.forEach(function(mapDetail) {
+    //     mapDetail.get('sectors').forEach(function(sector) {
+    //       var html = '<div><em>' + sector.get('name') + '</em></div>';
 
-          if (sector.get('level') > 0) {
-            html += '<div><em>(' + sector.get('level') + ')</em></div>';
-          }
+    //       if (sector.get('level') > 0) {
+    //         html += '<div><em>(' + sector.get('level') + ')</em></div>';
+    //       }
 
-          var mark = self.markerFor(sector.get('coord'), {
-            clickable: false,
-            opacity: 0.7,
-            zIndexOffset: -1000,
-            icon: L.divIcon({
-                html: html,
-                iconSize: [200, 32]
-            })
-          });
+    //       var mark = self.markerFor(sector.get('coord'), {
+    //         clickable: false,
+    //         opacity: 0.7,
+    //         zIndexOffset: -1000,
+    //         icon: L.divIcon({
+    //             html: html,
+    //             iconSize: [200, 32]
+    //         })
+    //       });
 
-          sectors.push(mark);
-        });
-      });
-    });
+    //       sectors.push(mark);
+    //     });
+    //   });
+    // });
 
     return L.layerGroup(sectors);
   }.property('sectors'),
@@ -135,28 +135,28 @@ App.WorldMapView = Ember.View.extend({
     var self = this;
     var skillChallenges =[]
 
-    this.get('mapFloor.regions').forEach(function(region) {
-      var mapDetails = region.get('mapDetails');
+    // this.get('mapFloor.regions').forEach(function(region) {
+    //   var mapDetails = region.get('mapDetails');
 
-      mapDetails.forEach(function(mapDetail) {
-        mapDetail.get('skill_challenges').forEach(function(skillChallenge) {
-          var mark = self.markerFor(skillChallenge.coord, {
-            title: 'Skill Challenge',
-            icon: L.icon({
-                iconUrl: 'images/leaflet-markers/skillchallenge.png',
-                shadowUrl: 'images/leaflet-markers/skillchallenge.png',
-                iconSize:     [20, 20], // size of the icon
-                shadowSize:   [20, 20], // size of the shadow
-                iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
-                shadowAnchor: [10, 10],  // the same for the shadow
-                popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
-            })
-          });
+    //   mapDetails.forEach(function(mapDetail) {
+    //     mapDetail.get('skill_challenges').forEach(function(skillChallenge) {
+    //       var mark = self.markerFor(skillChallenge.coord, {
+    //         title: 'Skill Challenge',
+    //         icon: L.icon({
+    //             iconUrl: 'images/leaflet-markers/skillchallenge.png',
+    //             shadowUrl: 'images/leaflet-markers/skillchallenge.png',
+    //             iconSize:     [20, 20], // size of the icon
+    //             shadowSize:   [20, 20], // size of the shadow
+    //             iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+    //             shadowAnchor: [10, 10],  // the same for the shadow
+    //             popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
+    //         })
+    //       });
 
-          skillChallenges.push(mark);
-        });
-      });
-    });
+    //       skillChallenges.push(mark);
+    //     });
+    //   });
+    // });
 
     return L.layerGroup(skillChallenges);
   }.property('mapFloor'),
@@ -165,42 +165,42 @@ App.WorldMapView = Ember.View.extend({
     var self = this;
     var pointsOfInterest =[]
 
-    this.get('mapFloor.regions').forEach(function(region) {
-      var mapDetails = region.get('mapDetails');
+    // this.get('mapFloor.regions').forEach(function(region) {
+    //   var mapDetails = region.get('mapDetails');
 
-      mapDetails.forEach(function(mapDetail) {
-        mapDetail.get('points_of_interest').forEach(function(poi) {
-          var type;
+    //   mapDetails.forEach(function(mapDetail) {
+    //     mapDetail.get('points_of_interest').forEach(function(poi) {
+    //       var type;
 
-          if (poi.get('type') === 'landmark') {
-            type = 'pointofinterest';
-          } else if (poi.get('type') === 'unlock') {
-            type = 'dungeon';
-          } else {
-            type = poi.get('type');
-          }
+    //       if (poi.get('type') === 'landmark') {
+    //         type = 'pointofinterest';
+    //       } else if (poi.get('type') === 'unlock') {
+    //         type = 'dungeon';
+    //       } else {
+    //         type = poi.get('type');
+    //       }
 
-          var mark = self.markerFor(poi.get('coord'), {
-            title: poi.get('name'),
-            icon: L.icon({
-                iconUrl: 'images/leaflet-markers/%@.png'.fmt(type),
-                shadowUrl: 'images/leaflet-markers/%@.png'.fmt(type),
-                iconSize:     [20, 20], // size of the icon
-                shadowSize:   [20, 20], // size of the shadow
-                iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
-                shadowAnchor: [10, 10],  // the same for the shadow
-                popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
-            })
-          });
+    //       var mark = self.markerFor(poi.get('coord'), {
+    //         title: poi.get('name'),
+    //         icon: L.icon({
+    //             iconUrl: 'images/leaflet-markers/%@.png'.fmt(type),
+    //             shadowUrl: 'images/leaflet-markers/%@.png'.fmt(type),
+    //             iconSize:     [20, 20], // size of the icon
+    //             shadowSize:   [20, 20], // size of the shadow
+    //             iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
+    //             shadowAnchor: [10, 10],  // the same for the shadow
+    //             popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
+    //         })
+    //       });
 
-          if (poi.get('name')) {
-            mark.bindPopup(poi.get('name'));
-          }
+    //       if (poi.get('name')) {
+    //         mark.bindPopup(poi.get('name'));
+    //       }
 
-          pointsOfInterest.push(mark);
-        });
-      });
-    });
+    //       pointsOfInterest.push(mark);
+    //     });
+    //   });
+    // });
 
     return L.layerGroup(pointsOfInterest);
   }.property('mapFloor'),

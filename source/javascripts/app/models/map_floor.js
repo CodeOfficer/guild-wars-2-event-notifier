@@ -1,11 +1,60 @@
 
 App.MapFloor = DS.Model.extend({
-  regions: DS.hasMany('App.Region'),
-
   clamped_view: DS.attr('raw'),
   continent_id: DS.attr('string'),
   floor_id: DS.attr('string'),
-  texture_dims: DS.attr('raw')
+  regionData: DS.attr('raw'),
+  texture_dims: DS.attr('raw'),
+
+  didLoad: function(){
+    debugger
+    // this.parseRegionData();
+  },
+
+  // init: function() {
+  //   this._super(arguments);
+  //   debugger
+  // },
+
+  regions: function() {
+    var regionData = this.get('regionData');
+    var regions = [];
+
+    Ember.keys(regionData).forEach(function(key) {
+      var region = regionData[key];
+      region.id = key;
+      regions.push(region);
+    });
+
+    return regions;
+  }.property('regionData'),
+
+  maps: function() {
+    var regions = this.get('regions');
+    var maps = [];
+
+    regions.forEach(function(region) {
+
+      Ember.keys(region.maps).forEach(function(key) {
+        var map = region.maps[key];
+        map.id = key;
+        map.region_id = region.id;
+        maps.push(map);
+      });
+
+      region.maps.forEach(function(map) {
+        map.region_id = regions.id;
+        maps.push(map);
+      });
+
+      var region = regionData[key];
+      region.id = key;
+      regions.push(region);
+    });
+
+    return maps;
+  }.property('regions')
+
 });
 
 // Required parameters:

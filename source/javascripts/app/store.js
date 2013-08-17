@@ -2,6 +2,7 @@
 App.JSONSerializer = DS.JSONSerializer.extend({
 
   extractEmbeddedData: function(hash, key) {
+    debugger
     // convert {"1", {}, "2", {}} to [{"id": 1}, {"id": 2}]
     if (['regions', 'maps'].contains(key)) {
       var json = hash[key];
@@ -210,31 +211,10 @@ App.RESTAdapter.map('App.EventDetail', {
   map: {key: 'map_id'}
 });
 
-App.RESTAdapter.map('App.MapDetail', {
-  points_of_interest: {embedded: 'load'},
-  sectors: {embedded: 'load'},
-  tasks: {embedded: 'load'}
-});
-
 App.RESTAdapter.map('App.MapFloor', {
-  regions: {embedded: 'load'}
+  regionData: {key: 'regions'}
 });
 
-App.RESTAdapter.map('App.Region', {
-  mapDetails: {key: 'maps', embedded: 'load'}
-});
-
-App.RESTAdapter.configure('App.Task', {
-  primaryKey: 'task_id'
-});
-
-App.RESTAdapter.configure('App.PointOfInterest', {
-  primaryKey: 'poi_id'
-});
-
-App.RESTAdapter.configure('App.Sector', {
-  primaryKey: 'sector_id'
-});
 
 App.RESTAdapter.configure('plurals', {
   map_floor: 'map_floor'
