@@ -1,21 +1,6 @@
 
 App.JSONSerializer = DS.JSONSerializer.extend({
 
-  extractEmbeddedData: function(hash, key) {
-    debugger
-    // convert {"1", {}, "2", {}} to [{"id": 1}, {"id": 2}]
-    if (['regions', 'maps'].contains(key)) {
-      var json = hash[key];
-      return Ember.keys(json).map(function(id) {
-        var object = json[id];
-        object.id = id;
-        return object;
-      });
-    }
-
-    return this._super(hash, key);
-  },
-
   // Our GW2 api does not sideload and returns some really shittastic  json
   extract: function(loader, json, type, record) {
     var root = this.rootForType(type);
@@ -32,7 +17,7 @@ App.JSONSerializer = DS.JSONSerializer.extend({
         var event_id = Ember.keys(json.events)[0];
 
         json = json.events[event_id];
-        json.event_id = event_id;
+        json.id = event_id;
       }
 
       if (type === App.Map) {
@@ -162,11 +147,6 @@ App.RESTAdapter = DS.RESTAdapter.extend({
         json.continent_id = continent_id;
         json.floor_id = floor_id;
       }
-
-      // if (type === App.Event) {
-      //   json.id = [json.world_id, json.map_id, json.event_id].join('.');
-      //   debugger
-      // }
 
       adapter.didFindQuery(store, type, json, recordArray);
     }).then(null, DS.rejectionHandler);
