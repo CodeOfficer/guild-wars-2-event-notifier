@@ -5,14 +5,6 @@ App.SettingsIndexController = Ember.ObjectController.extend({
 
   breadcrumbs: Ember.computed.alias('controllers.settings.breadcrumbs'),
 
-  // saveRecord: function(){
-  //   var content = this.get('content');
-
-  //   content.set('region', this.selectedRegion);
-  //   content.set('region', this.selectedInterval);
-  //   content.save();
-  // },
-
   regions: function() {
     return Ember.A([
       Ember.Object.create({id: 'NA', description: 'North America'}),

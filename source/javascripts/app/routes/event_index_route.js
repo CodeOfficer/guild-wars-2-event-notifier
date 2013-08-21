@@ -12,14 +12,19 @@ App.EventIndexRoute = Ember.Route.extend({
     controller.set('mapFloor', null);
 
     model.get('map').then(function(map) {
-      var mapFloor = App.MapFloor.find({
-        continent_id: model.get('map.continent_id'),
-        floor_id: model.get('map.default_floor')
-      });
+      var mapFloor = App.MapFloor.find(model.get('map.continent_id') + '.' + model.get('map.default_floor'));
 
-      mapFloor.one("didLoad", function() {
-        controller.set('mapFloor', mapFloor.get('firstObject'));
-      });
+      if (mapFloor.get('isLoaded')) {
+        controller.set('mapFloor', mapFloor);
+      } else {
+        mapFloor.one("didLoad", function() {
+          if (Ember.isArray(mapFloor)) {
+            controller.set('mapFloor', mapFloor.get('firstObject'));
+          } else {
+            controller.set('mapFloor', mapFloor);
+          }
+        });
+      }
     });
   }
 

@@ -1,5 +1,6 @@
 
 App.WorldName = DS.Model.extend({
+
   name: DS.attr('string'),
 
   isUS: function() {
@@ -22,4 +23,5 @@ App.WorldName = DS.Model.extend({
         return 'unknown';
     }
   }.property('id')
+
 });

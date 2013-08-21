@@ -1,5 +1,6 @@
 
 App.Event = DS.Model.extend({
+
   eventName: DS.belongsTo('App.EventName'),
   eventDetail: DS.belongsTo('App.EventDetail'),
   worldName: DS.belongsTo('App.WorldName'),
@@ -7,6 +8,7 @@ App.Event = DS.Model.extend({
   map: DS.belongsTo('App.Map'),
 
   state: DS.attr('string')
+
 });
 
 // we give Event a compisite primary key in the form of:

@@ -1,59 +1,94 @@
 
 App.MapFloor = DS.Model.extend({
+
   clamped_view: DS.attr('raw'),
   continent_id: DS.attr('string'),
   floor_id: DS.attr('string'),
   regionData: DS.attr('raw'),
   texture_dims: DS.attr('raw'),
 
-  didLoad: function(){
-    debugger
-    // this.parseRegionData();
+  init: function() {
+    this._super();
+    this.set('regions', []);
+    this.set('maps', []);
+    this.set('pointsOfInterest', []);
+    this.set('tasks', []);
+    this.set('sectors', []);
+    this.set('skillChallenges', []);
   },
 
-  // init: function() {
-  //   this._super(arguments);
-  //   debugger
-  // },
+  didLoad: function(){
+    this.parseRegionData();
+  },
 
-  regions: function() {
+  parseRegionData: function() {
     var regionData = this.get('regionData');
     var regions = [];
-
-    Ember.keys(regionData).forEach(function(key) {
-      var region = regionData[key];
-      region.id = key;
-      regions.push(region);
-    });
-
-    return regions;
-  }.property('regionData'),
-
-  maps: function() {
-    var regions = this.get('regions');
     var maps = [];
+    var pointsOfInterest = [];
+    var tasks = [];
+    var sectors = [];
+    var skillChallenges = [];
 
-    regions.forEach(function(region) {
+    Ember.keys(regionData).forEach(function(regionKey) {
+      var region = regionData[regionKey];
+      region.id = parseInt(regionKey, 10);
+      regions.push(region);
 
-      Ember.keys(region.maps).forEach(function(key) {
-        var map = region.maps[key];
-        map.id = key;
+      Ember.keys(region.maps).forEach(function(mapKey) {
+        var map = region.maps[mapKey];
+        map.id = parseInt(mapKey, 10);
         map.region_id = region.id;
         maps.push(map);
-      });
 
-      region.maps.forEach(function(map) {
-        map.region_id = regions.id;
-        maps.push(map);
-      });
+        if (map.points_of_interest) {
+          map.points_of_interest.forEach(function(poi) {
+            poi.id = poi.poi_id;
+            delete poi.poi_id;
+            poi.region_id = region.id;
+            poi.map_id = map.id;
+            pointsOfInterest.push(poi);
+          });
+        }
 
-      var region = regionData[key];
-      region.id = key;
-      regions.push(region);
+        if (map.tasks) {
+          map.tasks.forEach(function(task) {
+            task.id = task.task_id;
+            delete task.task_id;
+            task.region_id = region.id;
+            task.map_id = map.id;
+            tasks.push(task);
+          });
+        }
+
+        if (map.sectors) {
+          map.sectors.forEach(function(sector) {
+            sector.id = sector.sector_id;
+            delete sector.sector_id;
+            sector.region_id = region.id;
+            sector.map_id = map.id;
+            sectors.push(sector);
+          });
+        }
+
+        if (map.skill_challenges) {
+          map.skill_challenges.forEach(function(skillChallenge) {
+            skillChallenge.region_id = region.id;
+            skillChallenge.map_id = map.id;
+            skillChallenges.push(skillChallenge);
+          });
+        }
+
+      });
     });
 
-    return maps;
-  }.property('regions')
+    this.set('regions', regions);
+    this.set('maps', maps);
+    this.set('pointsOfInterest', pointsOfInterest);
+    this.set('tasks', tasks);
+    this.set('sectors', sectors);
+    this.set('skillChallenges', skillChallenges);
+  }
 
 });
 

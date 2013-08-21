@@ -1,5 +1,6 @@
 
 App.Map = DS.Model.extend({
+
   continent_id: DS.attr('number'),
   continent_name: DS.attr('string'),
   continent_rect: DS.attr('raw'),
@@ -12,6 +13,7 @@ App.Map = DS.Model.extend({
   region_id: DS.attr('number'),
   region_name: DS.attr('string'),
   skill_challenges: DS.attr('raw')
+
 });
 
 // {

@@ -5,7 +5,7 @@
 
 @charset "utf-8";
 
-/* remove later*/
+/* TODO remove */
 @media (min-width: 700px) {
   .nav-collapse.collapse {
     height: auto !important;
@@ -13,7 +13,7 @@
   }
 }
 
-/* remove later*/
+/* TODO revisit */
 .map {
   height: 500px;
 }
@@ -22,7 +22,6 @@ body {
   font-family: "Menomonia";
   margin-bottom: 20px;
 }
-
 
 /* layers control */
 .leaflet-control-layers-toggle {

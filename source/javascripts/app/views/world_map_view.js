@@ -53,15 +53,12 @@ App.WorldMapView = Ember.View.extend({
     var topLeft, bottomRight, bounds, padding;
 
     if (mapFloor.get('clamped_view')) {
-      console.log('•• [clamped_view]');
       bounds = mapFloor.get('clamped_view');
       padding = 0.2;
     } else if (map) {
-      console.log('[map]');
       bounds = map.get('continent_rect');
       padding = 0.2;
     } else {
-      console.log('[else]');
       bounds = mapFloor.get('texture_dims');
       padding = 0.1;
     }
@@ -93,117 +90,138 @@ App.WorldMapView = Ember.View.extend({
   layers: function() {
     return {
       'sectors': this.get('sectors'),
+      'tasks': this.get('tasks'),
       'skill challenges': this.get('skillChallenges'),
       'points of interest': this.get('pointsOfInterest')
     }
-  }.property('pointsOfInterest', 'skillChallenges', 'sectors'),
+  }.property('pointsOfInterest', 'skillChallenges', 'sectors', 'tasks'),
 
   sectors: function() {
     var self = this;
-    var sectors =[]
+    var sectors =[];
+    var records = this.get('mapFloor.sectors');
 
-    // this.get('mapFloor.regions').forEach(function(region) {
-    //   var mapDetails = region.get('mapDetails');
+    if (this.get('map.id')) {
+      records = records.filterProperty('map_id', this.get('map.id'));
+    }
 
-    //   mapDetails.forEach(function(mapDetail) {
-    //     mapDetail.get('sectors').forEach(function(sector) {
-    //       var html = '<div><em>' + sector.get('name') + '</em></div>';
+    records.forEach(function(sector) {
+      var html = '<div><em>' + sector.name + '</em></div>';
 
-    //       if (sector.get('level') > 0) {
-    //         html += '<div><em>(' + sector.get('level') + ')</em></div>';
-    //       }
+      if (sector.level > 0) {
+        html += '<div><em>(' + sector.level + ')</em></div>';
+      }
 
-    //       var mark = self.markerFor(sector.get('coord'), {
-    //         clickable: false,
-    //         opacity: 0.7,
-    //         zIndexOffset: -1000,
-    //         icon: L.divIcon({
-    //             html: html,
-    //             iconSize: [200, 32]
-    //         })
-    //       });
+      var mark = self.markerFor(sector.coord, {
+        clickable: false,
+        opacity: 0.7,
+        zIndexOffset: -1000,
+        icon: L.divIcon({
+            html: html,
+            iconSize: [200, 32]
+        })
+      });
 
-    //       sectors.push(mark);
-    //     });
-    //   });
-    // });
+      sectors.push(mark);
+    });
 
     return L.layerGroup(sectors);
-  }.property('sectors'),
+  }.property('mapFloor.sectors', 'map.id'),
+
+
+  tasks: function() {
+    var self = this;
+    var tasks =[]
+    var records = this.get('mapFloor.tasks');
+
+    if (this.get('map.id')) {
+      records = records.filterProperty('map_id', this.get('map.id'));
+    }
+
+    records.forEach(function(task) {
+      var mark = self.markerFor(task.coord, {
+        title: task.objective,
+        icon: L.icon({
+            iconUrl: 'images/leaflet-markers/asuragate.png',
+            shadowUrl: 'images/leaflet-markers/asuragate.png',
+            iconSize: [20, 20], // size of the icon
+            shadowSize: [20, 20], // size of the shadow
+            iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 10],  // the same for the shadow
+            popupAnchor: [-1, -1] // point from which the popup should open relative to the iconAnchor
+        })
+      });
+      tasks.push(mark);
+    });
+
+    return L.layerGroup(tasks);
+  }.property('mapFloor.tasks', 'map.id'),
 
   skillChallenges: function() {
     var self = this;
     var skillChallenges =[]
+    var records = this.get('mapFloor.skillChallenges');
 
-    // this.get('mapFloor.regions').forEach(function(region) {
-    //   var mapDetails = region.get('mapDetails');
+    if (this.get('map.id')) {
+      records = records.filterProperty('map_id', this.get('map.id'));
+    }
 
-    //   mapDetails.forEach(function(mapDetail) {
-    //     mapDetail.get('skill_challenges').forEach(function(skillChallenge) {
-    //       var mark = self.markerFor(skillChallenge.coord, {
-    //         title: 'Skill Challenge',
-    //         icon: L.icon({
-    //             iconUrl: 'images/leaflet-markers/skillchallenge.png',
-    //             shadowUrl: 'images/leaflet-markers/skillchallenge.png',
-    //             iconSize:     [20, 20], // size of the icon
-    //             shadowSize:   [20, 20], // size of the shadow
-    //             iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
-    //             shadowAnchor: [10, 10],  // the same for the shadow
-    //             popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
-    //         })
-    //       });
-
-    //       skillChallenges.push(mark);
-    //     });
-    //   });
-    // });
+    records.forEach(function(skillChallenge) {
+      var mark = self.markerFor(skillChallenge.coord, {
+        title: 'Skill Challenge',
+        icon: L.icon({
+            iconUrl: 'images/leaflet-markers/skillchallenge.png',
+            shadowUrl: 'images/leaflet-markers/skillchallenge.png',
+            iconSize: [20, 20], // size of the icon
+            shadowSize: [20, 20], // size of the shadow
+            iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 10],  // the same for the shadow
+            popupAnchor: [-1, -1] // point from which the popup should open relative to the iconAnchor
+        })
+      });
+      skillChallenges.push(mark);
+    });
 
     return L.layerGroup(skillChallenges);
-  }.property('mapFloor'),
+  }.property('mapFloor.skillChallenges', 'map.id'),
 
   pointsOfInterest: function() {
     var self = this;
     var pointsOfInterest =[]
+    var records = this.get('mapFloor.pointsOfInterest');
 
-    // this.get('mapFloor.regions').forEach(function(region) {
-    //   var mapDetails = region.get('mapDetails');
+    if (this.get('map.id')) {
+      records = records.filterProperty('map_id', this.get('map.id'));
+    }
 
-    //   mapDetails.forEach(function(mapDetail) {
-    //     mapDetail.get('points_of_interest').forEach(function(poi) {
-    //       var type;
+    records.forEach(function(poi) {
+      var type;
 
-    //       if (poi.get('type') === 'landmark') {
-    //         type = 'pointofinterest';
-    //       } else if (poi.get('type') === 'unlock') {
-    //         type = 'dungeon';
-    //       } else {
-    //         type = poi.get('type');
-    //       }
+      if (poi.type === 'landmark') {
+        type = 'pointofinterest';
+      } else if (poi.type === 'unlock') {
+        type = 'dungeon';
+      } else {
+        type = poi.type;
+      }
 
-    //       var mark = self.markerFor(poi.get('coord'), {
-    //         title: poi.get('name'),
-    //         icon: L.icon({
-    //             iconUrl: 'images/leaflet-markers/%@.png'.fmt(type),
-    //             shadowUrl: 'images/leaflet-markers/%@.png'.fmt(type),
-    //             iconSize:     [20, 20], // size of the icon
-    //             shadowSize:   [20, 20], // size of the shadow
-    //             iconAnchor:   [10, 10], // point of the icon which will correspond to marker's location
-    //             shadowAnchor: [10, 10],  // the same for the shadow
-    //             popupAnchor:  [-1, -1] // point from which the popup should open relative to the iconAnchor
-    //         })
-    //       });
-
-    //       if (poi.get('name')) {
-    //         mark.bindPopup(poi.get('name'));
-    //       }
-
-    //       pointsOfInterest.push(mark);
-    //     });
-    //   });
-    // });
+      var mark = self.markerFor(poi.coord, {
+        title: poi.name,
+        icon: L.icon({
+            iconUrl: 'images/leaflet-markers/%@.png'.fmt(type),
+            shadowUrl: 'images/leaflet-markers/%@.png'.fmt(type),
+            iconSize: [20, 20], // size of the icon
+            shadowSize: [20, 20], // size of the shadow
+            iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
+            shadowAnchor: [10, 10],  // the same for the shadow
+            popupAnchor: [-1, -1] // point from which the popup should open relative to the iconAnchor
+        })
+      });
+      pointsOfInterest.push(mark);
+    });
 
     return L.layerGroup(pointsOfInterest);
-  }.property('mapFloor'),
+  }.property('mapFloor.pointsOfInterest', 'map.id'),
 
   markerFor: function(coordinates, markerOptions) {
     var mapObject = this.get('mapObject');
@@ -212,8 +230,6 @@ App.WorldMapView = Ember.View.extend({
   },
 
   didInsertElement: function() {
-    var self = window.self = this;
-
     var mapObject = this.get('mapObject');
     var mapFloor = this.get('mapFloor');
     var bounds = this.get('bounds');
@@ -222,12 +238,14 @@ App.WorldMapView = Ember.View.extend({
     var sectors = this.get('sectors');
     var skillChallenges = this.get('skillChallenges');
     var pointsOfInterest = this.get('pointsOfInterest');
+    var tasks = this.get('tasks');
 
     mapObject.setMaxBounds(bounds).fitBounds(bounds);
     baseLayer.addTo(mapObject);
     mapObject.addLayer(sectors);
     mapObject.addLayer(skillChallenges);
     mapObject.addLayer(pointsOfInterest);
+    mapObject.addLayer(tasks);
     L.control.layers(null, layers).addTo(mapObject);
   },
 
