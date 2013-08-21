@@ -142,8 +142,8 @@ App.WorldMapView = Ember.View.extend({
       var mark = self.markerFor(task.coord, {
         title: task.objective,
         icon: L.icon({
-            iconUrl: 'images/leaflet-markers/asuragate.png',
-            shadowUrl: 'images/leaflet-markers/asuragate.png',
+            iconUrl: 'images/leaflet-markers/task.png',
+            shadowUrl: 'images/leaflet-markers/task.png',
             iconSize: [20, 20], // size of the icon
             shadowSize: [20, 20], // size of the shadow
             iconAnchor: [10, 10], // point of the icon which will correspond to marker's location
