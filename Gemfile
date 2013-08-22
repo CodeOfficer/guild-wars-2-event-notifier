@@ -2,12 +2,11 @@
 # the following line to use "https"
 source 'http://rubygems.org'
 
-# Versioning for the handlebars-source gem is wonky.
-# 1.0.9 gets lodaded unless we specifiy 1.0.0.rcX here
-# http://rubygems.org/gems/handlebars-source
-gem "handlebars-source", "1.0.0.rc4"
-# gem "handlebars-source", "1.0.12"
+# TODO revisit ...
+gem "handlebars-source", "1.0.12"
+gem "ember-source", "1.0.0.rc7"
+gem "barber", "0.4.2"
+gem "ember-middleman", "0.0.3"
 
-gem "middleman", "~>3.0.14"
+gem "middleman", "~>3.1.4"
 
-gem "middleman-ember", github: "nerdyworm/middleman-ember"
