@@ -80,3 +80,30 @@ http://gw2.chillerlan.net/examples/gw2maps-jquery.html
 https://forum-en.guildwars2.com/forum/community/api/Event-Details-API-location-coordinates/first#post2355531
 
 
+// // map within the worldmap with poi given - especially for wiki purposes - try this in a small container
+// gw2map({map_container:"map1", language:1, region_id:4, map_id:50, poi_id:1057, poi_type:1, width:250, height: 250, disable_controls:1});
+// // single floor outside the worldmap
+// gw2map({map_container:"map2", floor_id:-2, region_id:2, map_id:33});
+// // map within the worldmap
+// gw2map({map_container:"map3", language:4, region_id:1, map_id:26});
+// // specific floor within a region
+// gw2map({map_container:"map4", language:3, continent_id:2, floor_id:3});
+// // full world map
+// gw2map({map_container:"map5", width:100, w_percent:1, height:600});
+
+  // Required parameters:
+  // continent_id: null,
+  // floor_id: null,
+
+  // region_id: null,
+  // map_id: null,
+
+  // continent, map, [event, poi, etc]
+
+
+// http://jsfiddle.net/cliff/CRRGC/
+
+// TODO move this somewhere
+// L.Icon.Default.imagePath = 'stylesheets/app/leaflet-markers';
+
+
