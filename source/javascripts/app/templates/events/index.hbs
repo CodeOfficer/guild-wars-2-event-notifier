@@ -3,7 +3,7 @@
 
 {{#each event in controller}}
   <div>
-    {{#linkTo "event" breadcrumbWorld breadcrumbMap event}}{{event.eventName.name}}{{/linkTo}}
+    {{#linkTo "event" breadcrumbWorldName breadcrumbMapName event}}{{event.eventName.name}}{{/linkTo}}
     {{event.state}}
   </div>
 {{else}}

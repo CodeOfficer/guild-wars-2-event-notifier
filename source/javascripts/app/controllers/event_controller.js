@@ -3,8 +3,8 @@ App.EventController = Ember.ObjectController.extend({
 
   needs: ['world', 'map', 'events'],
 
-  breadcrumbMap: Ember.computed.alias('controllers.map.content'),
-  breadcrumbWorld: Ember.computed.alias('controllers.world.content'),
+  breadcrumbMapName: Ember.computed.alias('controllers.map.content'),
+  breadcrumbWorldName: Ember.computed.alias('controllers.world.content'),
 
   breadcrumbs: function() {
     var trail = this.get('controllers.events.breadcrumbs');
