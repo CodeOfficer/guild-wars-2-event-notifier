@@ -1,10 +1,7 @@
 
 App.EventNameRoute = Ember.Route.extend({
 
-  serialize:  function(model, params) {
-    return { event_name_id: model.get('eventName.id') };
-  },
-
+  // We actually return an Event here, not an EventName
   model: function(params) {
     var world_name = this.modelFor('world_name');
     var map_name = this.modelFor('map_name');
@@ -20,6 +17,10 @@ App.EventNameRoute = Ember.Route.extend({
     });
 
     return event;
+  },
+
+  serialize:  function(model, params) {
+    return { event_name_id: model.get('eventName.id') };
   }
 
 });
