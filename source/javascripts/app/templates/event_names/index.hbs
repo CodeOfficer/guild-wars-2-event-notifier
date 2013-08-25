@@ -1,0 +1,11 @@
+
+{{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
+
+{{#each event_name in controller}}
+  <div>
+    {{#linkTo "event_name" breadcrumbWorldName breadcrumbMapName event_name}}{{event_name.eventName.name}}{{/linkTo}}
+    {{event_name.state}}
+  </div>
+{{else}}
+  <div>No events found</div>
+{{/each}}

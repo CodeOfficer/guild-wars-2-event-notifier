@@ -1,0 +1,31 @@
+
+{{view App.BreadcrumbsView contentBinding="breadcrumbs" }}
+
+
+<div class="row-fluid">
+  <div class="span6">
+
+    <h2>North America</h2>
+    {{#each americanWorldNames}}
+      <div>
+        {{#linkTo "map_names" this}}{{name}}{{/linkTo}}
+      </div>
+    {{else}}
+      <div>No worlds found</div>
+    {{/each}}
+
+  </div>
+  <div class="span6">
+
+    <h2>Europe</h2>
+    {{#each europeanWorldNames}}
+      <div>
+        {{#linkTo "map_names" this}}{{name}}{{/linkTo}}
+      </div>
+    {{else}}
+      <div>No worlds found</div>
+    {{/each}}
+
+  </div>
+</div>
+

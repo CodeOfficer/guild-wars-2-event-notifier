@@ -1,11 +1,11 @@
 
 App.Router.map(function() {
-  this.resource('worlds', function() {
-    this.resource('world', {path: ':world_id'}, function() {
-      this.resource('maps', function() {
-        this.resource('map', {path: ':map_id'}, function() {
-          this.resource('events', function() {
-            this.resource('event', {path: ':event_id'}, function() {});
+  this.resource('world_names', function() {
+    this.resource('world_name', {path: ':world_name_id'}, function() {
+      this.resource('map_names', function() {
+        this.resource('map_name', {path: ':map_name_id'}, function() {
+          this.resource('event_names', function() {
+            this.resource('event_name', {path: ':event_name_id'}, function() {});
           });
         });
       });
