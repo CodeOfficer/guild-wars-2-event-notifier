@@ -16,7 +16,7 @@ App.EventName = DS.Model.extend({
 
 // Event model
 // the endpoint for /events is just a bunch of foreign keys and a state field
-// events objcets themselves do not have id's
+// events objects themselves do not have id's
 
 App.Event = DS.Model.extend({
   eventName: DS.belongsTo('App.EventName'),
@@ -49,3 +49,5 @@ which i get to by doing
 {{#linkTo "event" world map event.eventName}}{{event.eventName.name}}{{/linkTo}}
 
 but then
+
+.... *see models with composite ids* fix

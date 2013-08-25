@@ -1,4 +1,4 @@
-This api randomly returns records like so:
+This api returns records like so:
 
 {
   "post": {
