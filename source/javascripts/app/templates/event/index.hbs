@@ -15,5 +15,6 @@
 <div>map_name: {{map.map_name}}</div>
 
 {{#if mapFloor.isLoaded}}
-  {{view App.WorldMapView mapBinding=map mapFloorBinding=mapFloor}}
+  {{world-map map=map mapFloor=mapFloor}}
 {{/if}}
+
