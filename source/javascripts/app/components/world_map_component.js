@@ -62,10 +62,10 @@ App.WorldMapComponent = Ember.Component.extend({
 
     layers: function() {
       return {
-        'sectors': this.get('sectors'),
-        'tasks': this.get('tasks'),
-        'skill challenges': this.get('skillChallenges'),
-        'points of interest': this.get('pointsOfInterest')
+        'Sectors': this.get('sectors'),
+        'Tasks': this.get('tasks'),
+        'Skill Challenges': this.get('skillChallenges'),
+        'Points of Interest': this.get('pointsOfInterest')
       }
     }.property('pointsOfInterest', 'skillChallenges', 'sectors', 'tasks'),
 
