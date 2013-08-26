@@ -124,6 +124,9 @@ App.WorldMapComponent = Ember.Component.extend({
               popupAnchor: [-1, -1] // point from which the popup should open relative to the iconAnchor
           })
         });
+        if (task.objective) {
+          mark.bindPopup(task.objective);
+        }
         tasks.push(mark);
       });
 
@@ -190,6 +193,9 @@ App.WorldMapComponent = Ember.Component.extend({
               popupAnchor: [-1, -1] // point from which the popup should open relative to the iconAnchor
           })
         });
+        if (poi.name) {
+          mark.bindPopup(poi.name);
+        }
         pointsOfInterest.push(mark);
       });
 
