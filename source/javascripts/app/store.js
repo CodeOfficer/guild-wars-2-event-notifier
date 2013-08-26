@@ -191,6 +191,10 @@ App.RESTAdapter.map('App.EventDetail', {
   map: {key: 'map_id'}
 });
 
+App.RESTAdapter.map('App.MapName', {
+  map: {key: 'id'}
+});
+
 App.RESTAdapter.map('App.MapFloor', {
   regionData: {key: 'regions'}
 });

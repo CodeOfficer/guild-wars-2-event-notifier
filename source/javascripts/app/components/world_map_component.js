@@ -75,7 +75,7 @@ App.WorldMapComponent = Ember.Component.extend({
       var records = this.get('mapFloor.sectors');
 
       if (this.get('map.id')) {
-        records = records.filterProperty('map_id', this.get('map.id'));
+        records = records.filterProperty('map_id', parseInt(this.get('map.id'), 10));
       }
 
       records.forEach(function(sector) {
@@ -108,7 +108,7 @@ App.WorldMapComponent = Ember.Component.extend({
       var records = this.get('mapFloor.tasks');
 
       if (this.get('map.id')) {
-        records = records.filterProperty('map_id', this.get('map.id'));
+        records = records.filterProperty('map_id', parseInt(this.get('map.id'), 10));
       }
 
       records.forEach(function(task) {
@@ -139,7 +139,7 @@ App.WorldMapComponent = Ember.Component.extend({
       var records = this.get('mapFloor.skillChallenges');
 
       if (this.get('map.id')) {
-        records = records.filterProperty('map_id', this.get('map.id'));
+        records = records.filterProperty('map_id', parseInt(this.get('map.id'), 10));
       }
 
       records.forEach(function(skillChallenge) {
@@ -167,7 +167,7 @@ App.WorldMapComponent = Ember.Component.extend({
       var records = this.get('mapFloor.pointsOfInterest');
 
       if (this.get('map.id')) {
-        records = records.filterProperty('map_id', this.get('map.id'));
+        records = records.filterProperty('map_id', parseInt(this.get('map.id'), 10));
       }
 
       records.forEach(function(poi) {

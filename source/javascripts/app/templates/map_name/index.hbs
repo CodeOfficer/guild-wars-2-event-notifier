@@ -4,3 +4,7 @@
 <h1>{{name}}</h1>
 
 {{#linkTo 'event_names' breadcrumbWorldName this}}events{{/linkTo}}
+
+{{#if mapFloor.isLoaded}}
+  {{world-map map=map mapFloor=mapFloor}}
+{{/if}}
