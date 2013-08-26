@@ -1,7 +1,6 @@
 
 App.EventDetail = DS.Model.extend({
 
-  event: DS.belongsTo('App.Event'),
   map: DS.belongsTo('App.Map'),
 
   flags: DS.attr('raw'),
