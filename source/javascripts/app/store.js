@@ -1,5 +1,5 @@
 
-App.JSONSerializer = DS.JSONSerializer.extend({
+App.ApplicationSerializer = DS.JSONSerializer.extend({
 
   // Our GW2 api does not sideload and returns some really shittastic  json
   extract: function(loader, json, type, record) {
@@ -91,7 +91,7 @@ App.JSONSerializer = DS.JSONSerializer.extend({
 });
 
 App.ApplicationAdapter = DS.RESTAdapter.extend({
-  serializer: App.JSONSerializer.create(),
+  // serializer: App.JSONSerializer.create(),
 
   url: 'https://api.guildwars2.com',
 
@@ -204,4 +204,4 @@ App.RESTAdapter.configure('plurals', {
   map_floor: 'map_floor'
 });
 
-App.Store.registerAdapter('App.Setting', DS.LSAdapter.extend());
+App.SettingAdapter = DS.LSAdapter.extend();
