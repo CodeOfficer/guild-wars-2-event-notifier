@@ -9,6 +9,7 @@ App.EventNameIndexRoute = Ember.Route.extend({
   setupController: function(controller, model) {
     this._super(controller, model);
 
+    var store = this.store;
     var map = model.get('map');
 
     controller.set('map', map);
@@ -16,7 +17,7 @@ App.EventNameIndexRoute = Ember.Route.extend({
     controller.set('mapFloor', null);
 
     map.then(function() {
-      var mapFloor = App.MapFloor.find(map.get('continent_id') + '.' + map.get('default_floor'));
+      var mapFloor = store.find('map_floor', map.get('continent_id') + '.' + map.get('default_floor'));
 
       if (mapFloor.get('isLoaded')) {
         controller.set('mapFloor', mapFloor);

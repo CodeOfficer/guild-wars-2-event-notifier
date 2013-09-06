@@ -102,7 +102,7 @@ App.RESTAdapter = DS.RESTAdapter.extend({
     var params = '',
           continent_id, floor_id;
 
-    // App.MapFloor.find('1.2')
+    // store.find('map_floor', '1.2')
     if (type === App.MapFloor) {
       values = id.split('.');
       continent_id = values[0];
@@ -129,7 +129,7 @@ App.RESTAdapter = DS.RESTAdapter.extend({
     var params = '',
           continent_id, floor_id;
 
-    // App.MapFloor.find({continent_id: 1, floor_id: 3})
+    // store.find({continent_id: 1, floor_id: 3})
     if (type === App.MapFloor) {
       continent_id = query['continent_id'];
       floor_id = query['floor_id'];
