@@ -90,7 +90,7 @@ App.JSONSerializer = DS.JSONSerializer.extend({
   }
 });
 
-App.RESTAdapter = DS.RESTAdapter.extend({
+App.ApplicationAdapter = DS.RESTAdapter.extend({
   serializer: App.JSONSerializer.create(),
 
   url: 'https://api.guildwars2.com',
@@ -204,8 +204,6 @@ App.RESTAdapter.configure('plurals', {
   map_floor: 'map_floor'
 });
 
-App.Store = DS.Store.extend({
-  adapter: App.RESTAdapter.create()
-});
+App.Store = DS.Store.extend();
 
 App.Store.registerAdapter('App.Setting', DS.LSAdapter.extend());
