@@ -204,6 +204,4 @@ App.RESTAdapter.configure('plurals', {
   map_floor: 'map_floor'
 });
 
-App.Store = DS.Store.extend();
-
 App.Store.registerAdapter('App.Setting', DS.LSAdapter.extend());
