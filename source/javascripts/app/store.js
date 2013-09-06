@@ -169,13 +169,13 @@ App.ApplicationAdapter = DS.RESTAdapter.extend({
   }
 });
 
-App.RESTAdapter.registerTransform('raw', {
-  serialize: function(value) {
-    return value;
+App.RawTransform = DS.Transform.extend({
+  serialize: function(serialized) {
+    return serialized;
   },
 
-  deserialize: function(value) {
-    return value;
+  deserialize: function(deserialized) {
+    return deserialized;
   }
 });
 
