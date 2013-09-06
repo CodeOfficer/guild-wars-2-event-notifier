@@ -91,9 +91,8 @@ App.ApplicationSerializer = DS.JSONSerializer.extend({
 });
 
 App.ApplicationAdapter = DS.RESTAdapter.extend({
-  // serializer: App.JSONSerializer.create(),
 
-  url: 'https://api.guildwars2.com',
+  host: 'https://api.guildwars2.com',
 
   namespace: 'v1',
 
