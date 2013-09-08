@@ -27,7 +27,7 @@ GEM
       middleman-more (~> 3.0)
       middleman-sprockets (~> 3.0)
       sass
-    ember-source (1.0.0.rc7)
+    ember-source (1.0.0)
       handlebars-source (= 1.0.12)
     execjs (1.4.0)
       multi_json (~> 1.0)
@@ -102,6 +102,6 @@ PLATFORMS
 DEPENDENCIES
   barber (= 0.4.2)
   ember-middleman (= 0.0.3)
-  ember-source (= 1.0.0.rc7)
+  ember-source (= 1.0.0)
   handlebars-source (= 1.0.12)
   middleman (~> 3.1.4)
