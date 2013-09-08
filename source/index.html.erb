@@ -6,15 +6,6 @@ title: Guild Wars 2 App
 
 <script>
   $(function() {
-    var promises = [
-      App.WorldName.find({}),
-      App.EventName.find({}),
-      App.MapName.find({}),
-      App.Continent.find({})
-    ];
-
-    Ember.RSVP.all(promises).then(function() {
-      App.advanceReadiness();
-    });
+    App.advanceReadiness();
   });
 </script>

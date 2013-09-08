@@ -1,11 +1,11 @@
 
 App.Event = DS.Model.extend({
 
-  eventName: DS.belongsTo('App.EventName'),
-  eventDetail: DS.belongsTo('App.EventDetail'),
-  worldName: DS.belongsTo('App.WorldName'),
-  mapName: DS.belongsTo('App.MapName'),
-  map: DS.belongsTo('App.Map'),
+  eventName: DS.belongsTo('eventName'),
+  eventDetail: DS.belongsTo('eventDetail', {async: true}),
+  worldName: DS.belongsTo('worldName'),
+  mapName: DS.belongsTo('mapName'),
+  map: DS.belongsTo('map', {async: true}),
 
   state: DS.attr('string')
 

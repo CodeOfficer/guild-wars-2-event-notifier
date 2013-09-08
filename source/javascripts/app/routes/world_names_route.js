@@ -2,7 +2,7 @@
 App.WorldNamesRoute = Ember.Route.extend({
 
   model: function() {
-    return App.WorldName.all();
+    return this.store.all('world_name');
   }
 
 });

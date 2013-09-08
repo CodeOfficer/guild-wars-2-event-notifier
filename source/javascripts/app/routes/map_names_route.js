@@ -2,7 +2,7 @@
 App.MapNamesRoute = Ember.Route.extend({
 
   model: function() {
-    return App.MapName.all();
+    return this.store.all('map_name');
   }
 
 });
