@@ -107,3 +107,4 @@ https://forum-en.guildwars2.com/forum/community/api/Event-Details-API-location-c
 // L.Icon.Default.imagePath = 'stylesheets/app/leaflet-markers';
 
 
+before I worried about whether to persist the flaws of their api to my app, now i adapt the api to fit my needs and give ember data the json it expects through normalization
