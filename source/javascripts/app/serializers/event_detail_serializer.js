@@ -11,7 +11,8 @@ App.EventDetailSerializer = DS.RESTSerializer.extend({
   },
 
   normalize: function(type, hash, prop) {
-    hash.map = hash.id;
+    hash.map = hash.map_id;
+    delete hash.map_id;
 
     return this._super(type, hash, prop);
   }
