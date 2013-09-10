@@ -10,3 +10,5 @@ bundle exec middleman
 ```
 
 * http://localhost:4567/
+
+Sadly, there are no tests yet ....
