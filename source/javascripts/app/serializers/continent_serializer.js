@@ -1,5 +1,6 @@
+//= require ./application_serializer
 
-App.ContinentSerializer = DS.RESTSerializer.extend({
+App.ContinentSerializer = App.ApplicationSerializer.extend({
 
   // Our GW2 api returns more shittastic json
   // {"continents": {"1": {"name": "Tyria"}, "2": {"name": "Tyria"}}}

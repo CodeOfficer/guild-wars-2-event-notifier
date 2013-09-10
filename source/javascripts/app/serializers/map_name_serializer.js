@@ -1,5 +1,6 @@
+//= require ./application_serializer
 
-App.MapNameSerializer = DS.RESTSerializer.extend({
+App.MapNameSerializer = App.ApplicationSerializer.extend({
 
   extractArray: function(store, type, payload, id, requestType) {
     payload = {"map_names": payload};
@@ -7,10 +8,12 @@ App.MapNameSerializer = DS.RESTSerializer.extend({
     return this._super(store, type, payload, id, requestType);
   },
 
-  normalize: function(type, hash, prop) {
-    hash.map = hash.id;
+  normalizeHash: {
+    map_names: function(hash) {
+      hash.map = hash.id;
 
-    return this._super(type, hash, prop);
+      return hash;
+    }
   }
 
 });

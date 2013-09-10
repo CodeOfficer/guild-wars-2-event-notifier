@@ -1,5 +1,6 @@
+//= require ./application_serializer
 
-App.WorldNameSerializer = DS.RESTSerializer.extend({
+App.WorldNameSerializer = App.ApplicationSerializer.extend({
 
   extractArray: function(store, type, payload, id, requestType) {
     payload = {"world_names": payload};

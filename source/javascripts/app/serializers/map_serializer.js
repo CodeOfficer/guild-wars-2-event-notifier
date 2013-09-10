@@ -1,11 +1,12 @@
+//= require ./application_serializer
 
-App.MapSerializer = DS.RESTSerializer.extend({
+App.MapSerializer = App.ApplicationSerializer.extend({
 
   extractSingle: function(store, primaryType, payload, recordId, requestType) {
-    var json = payload.maps[recordId];
 
-    json.id = recordId;
-    payload = {"map": json};
+    payload = payload.maps[recordId];
+    payload.id = recordId;
+    payload = {"map": payload};
 
     return this._super(store, primaryType, payload, recordId, requestType);
   }
