@@ -9,22 +9,19 @@ App.MapNameIndexRoute = Ember.Route.extend({
     this._super(controller, model);
 
     var store = this.store;
-    var map = model.get('map');
 
-    controller.set('map', map);
-    controller.set('mapFloor', null);
+    var mapPromise = model.get('map').then(function(map) {
+      controller.set('map', map);
+      return map;
+    }).then(function(map) {
+      var mapFloorPromise = store.find('map_floor', map.get('continent_id') + '.' + map.get('default_floor'));
 
-    map.then(function() {
-      var mapFloor = store.find('map_floor', map.get('continent_id') + '.' + map.get('default_floor'));
-
-      if (mapFloor.get('isLoaded')) {
+      return mapFloorPromise.then(function(mapFloor) {
         controller.set('mapFloor', mapFloor);
-      } else {
-        mapFloor.one("didLoad", function() {
-          controller.set('mapFloor', mapFloor);
-        });
-      }
+      })
     });
+
+    return mapPromise;
   }
 
 });
