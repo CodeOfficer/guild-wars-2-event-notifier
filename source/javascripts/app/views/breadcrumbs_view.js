@@ -1,20 +1,21 @@
 
 App.BreadcrumbsView =  Bootstrap.Breadcrumb.extend({
+  actions: {
+    gotoRoute: function(content) {
+      var path = content.get('path');
+      var args = content.get('args');
+      var controller = this.get('parentView.controller');
+      var transitionToRoute = controller.transitionToRoute;
 
-  gotoRoute: function(content) {
-    var path = content.get('path');
-    var args = content.get('args');
-    var controller = this.get('parentView.controller');
-    var transitionToRoute = controller.transitionToRoute;
-
-    if (Ember.isArray(args)) {
-      // TODO huh? wtfbbq? investigate
-      if (args[0] !== path) {
-        args.unshift(path);
+      if (Ember.isArray(args)) {
+        // TODO huh? wtfbbq? investigate
+        if (args[0] !== path) {
+          args.unshift(path);
+        }
+        transitionToRoute.apply(controller, args);
+      } else {
+        transitionToRoute.call(controller, path);
       }
-      transitionToRoute.apply(controller, args);
-    } else {
-      transitionToRoute.call(controller, path);
     }
   },
 
