@@ -10,18 +10,19 @@ App.MapNameIndexRoute = Ember.Route.extend({
 
     var store = this.store;
 
-    var mapPromise = model.get('map').then(function(map) {
+    function setMapAndMapFloor(map) {
       controller.set('map', map);
-      return map;
-    }).then(function(map) {
       var mapFloorPromise = store.find('map_floor', map.get('continent_id') + '.' + map.get('default_floor'));
 
-      return mapFloorPromise.then(function(mapFloor) {
+      mapFloorPromise.then(function(mapFloor) {
         controller.set('mapFloor', mapFloor);
-      })
-    });
+      });
+    }
 
-    return mapPromise;
+    if (model.get('map').then) {
+      model.get('map').then(setMapAndMapFloor);
+    } else {
+      setMapAndMapFloor.call(this, model.get('map'));
+    }
   }
-
 });
