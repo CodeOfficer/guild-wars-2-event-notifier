@@ -8,16 +8,16 @@ window.addEventListener('load', function() {
   new FastClick(document.body);
 }, false);
 
-Ember.RSVP.configure('onerror', function(e) {
-  console.error(e.message);
-  console.error(e.stack);
-});
+// Ember.RSVP.configure('onerror', function(e) {
+//   console.error(e.message);
+//   console.error(e.stack);
+// });
 
 App = Ember.Application.create({
   // LOG_STACKTRACE_ON_DEPRECATION : true,
   // LOG_BINDINGS : true,
   LOG_TRANSITIONS : true,
-  LOG_TRANSITIONS_INTERNAL : true,
+  // LOG_TRANSITIONS_INTERNAL : true,
   // LOG_VIEW_LOOKUPS : true,
   // LOG_ACTIVE_GENERATION : true,
 
