@@ -10,11 +10,13 @@
 
   <body>
     <div id="mocha"></div>
+    <div id="mocha-fixture"></div>
 
     <script>
       mocha.ui('bdd');
       mocha.checkLeaks();
       mocha.globals(['Ember', 'DS', 'App']);
+      chai.should();
       chai.Assertion.includeStack = true;
 
     </script>

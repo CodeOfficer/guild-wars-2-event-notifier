@@ -1,3 +1,22 @@
 /*
   *= require test/mocha
+  *= require_self
 */
+
+#mocha-fixture {
+  position: fixed;
+  border: 1px black solid;
+  bottom: 20px;
+  right: 20px;
+}
+
+#mocha-fixture {
+  transform: scale(0.4);
+  -webkit-transform: scale(0.4);
+  transform-origin: bottom right;
+  -webkit-transform-origin: bottom right;
+}
+
+#mocha-stats .progress {
+  height: 40px;
+}
