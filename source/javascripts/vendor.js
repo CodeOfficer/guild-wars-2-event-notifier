@@ -1,4 +1,3 @@
-//= require ./vendor/fastclick
 //= require ./vendor/jquery
 //= require ./vendor/leaflet
 //= require ./vendor/bootstrap

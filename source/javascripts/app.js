@@ -1,13 +1,6 @@
 //= require_self
 //= require_tree ./app/
 
-// FastClick is a simple, easy-to-use library for eliminating the 300ms delay between a physical
-// tap and the firing of a click event on mobile browsers. The aim is to make your application
-// feel less laggy and more responsive while avoiding any interference with your current logic.
-window.addEventListener('load', function() {
-  new FastClick(document.body);
-}, false);
-
 // Ember.RSVP.configure('onerror', function(e) {
 //   console.error(e.message);
 //   console.error(e.stack);
