@@ -27,7 +27,7 @@ App.MapFloorAdapter = App.ApplicationAdapter.extend({
   },
 
   pathForType: function(type) {
-    return type;
+    return Ember.String.underscore(type);
   }
 
 });
