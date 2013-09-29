@@ -23,9 +23,7 @@ App.MapNameIndexRoute = Ember.Route.extend({
     // association is somces a promise and sometimes not
     if (model.get('map').then) {
       model.get('map').then(setMapAndMapFloor);
-      console.log("_________________")
     } else {
-      console.log("++++++++++")
       setMapAndMapFloor.call(this, model.get('map'));
     }
   }
