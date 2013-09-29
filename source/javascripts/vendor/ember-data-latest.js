@@ -7,8 +7,8 @@
 
 
 
-// Version: v1.0.0-beta.3
-// Last commit: 2259c27 (2013-09-28 19:24:07 -0700)
+// Version: v1.0.0-beta.3-4-ga59ca8b
+// Last commit: a59ca8b (2013-09-29 09:14:24 -0700)
 
 
 (function() {
@@ -6995,6 +6995,8 @@ DS.RESTAdapter = DS.Adapter.extend({
     This method will be called with the parent record and `/posts/1/comments`.
 
     It will make an Ajax request to the originally specified URL.
+    If the URL is host-relative (starting with a single slash), the
+    request will use the host specified on the adapter (if any).
 
     @method findHasMany
     @see RESTAdapter/buildURL
@@ -7005,8 +7007,13 @@ DS.RESTAdapter = DS.Adapter.extend({
     @returns Promise
   */
   findHasMany: function(store, record, url) {
-    var id   = get(record, 'id'),
+    var host = get(this, 'host'),
+        id   = get(record, 'id'),
         type = record.constructor.typeKey;
+
+    if (host && url.charAt(0) === '/' && url.charAt(1) !== '/') {
+      url = host + url;
+    }
 
     return this.ajax(this.urlPrefix(url, this.buildURL(type, id)), 'GET');
   },
