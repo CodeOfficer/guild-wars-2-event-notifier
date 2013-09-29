@@ -3,9 +3,9 @@ App.ApplicationRoute = Ember.Route.extend({
 
   beforeModel: function() {
     var promises = [
-      this.store.find('world_name', {}),
-      this.store.find('event_name', {}),
-      this.store.find('map_name', {}),
+      this.store.find('worldName', {}),
+      this.store.find('eventName', {}),
+      this.store.find('mapName', {}),
       this.store.find('continent', {})
     ];
 
