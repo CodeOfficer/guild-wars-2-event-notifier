@@ -26,7 +26,7 @@ App.MapFloorAdapter = App.ApplicationAdapter.extend({
     });
   },
 
-  rootForType: function(type) {
+  pathForType: function(type) {
     return type;
   }
 
