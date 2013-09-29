@@ -20,6 +20,10 @@ App.EventNameIndexRoute = Ember.Route.extend({
       });
     }
 
+    // TODO: doesn't seem to be an issue here but remainds for
+    // the map_name_index_route
+    // this should have been fixed in ember data 3
+    // association is somces a promise and sometimes not
     if (model.get('map').then) {
       model.get('map').then(setMapAndMapFloor);
     } else {
