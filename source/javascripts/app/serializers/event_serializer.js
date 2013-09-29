@@ -8,11 +8,9 @@ App.EventSerializer = App.ApplicationSerializer.extend({
       hash.eventName = hash.event_id;
       hash.eventDetail = hash.event_id;
       hash.worldName = hash.world_id;
-      hash.mapName = hash.map_id;
-      hash.map = hash.map_id;
+      hash.mapName = hash.map;
       delete hash.event_id;
       delete hash.world_id;
-      delete hash.map_id;
 
       return hash;
     }
