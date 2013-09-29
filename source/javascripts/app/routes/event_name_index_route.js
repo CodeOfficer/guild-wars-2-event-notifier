@@ -3,7 +3,7 @@ App.EventNameIndexRoute = Ember.Route.extend({
 
   // We actually return an Event here, not an EventName
   model: function(params) {
-    return this.modelFor('eventName');
+    return this.modelFor('event_name');
   },
 
   setupController: function(controller, model) {
