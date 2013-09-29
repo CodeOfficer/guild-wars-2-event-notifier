@@ -4,13 +4,13 @@ App.EventNameRoute = Ember.Route.extend({
   // We actually return an Event here, not an EventName
   model: function(params) {
     var store = this.store;
-    var world_name = this.modelFor('world_name');
-    var map_name = this.modelFor('map_name');
+    var worldName = this.modelFor('worldName');
+    var mapName = this.modelFor('mapName');
 
     return new Ember.RSVP.Promise(function(resolve) {
       store.find('event', {
-        world_id: world_name.get('id'),
-        map_id: map_name.get('id'),
+        world_id: worldName.get('id'),
+        map_id: mapName.get('id'),
         event_id: params.event_name_id
       }).then(function(events) {
         return resolve(events.get("firstObject"));

@@ -2,7 +2,7 @@
 App.MapNameIndexRoute = Ember.Route.extend({
 
   model: function(params) {
-    return this.modelFor('map_name');
+    return this.modelFor('mapName');
   },
 
   setupController: function(controller, model) {
@@ -12,7 +12,7 @@ App.MapNameIndexRoute = Ember.Route.extend({
 
     function setMapAndMapFloor(map) {
       controller.set('map', map);
-      var mapFloorPromise = store.find('map_floor', map.get('continent_id') + '.' + map.get('default_floor'));
+      var mapFloorPromise = store.find('mapFloor', map.get('continent_id') + '.' + map.get('default_floor'));
 
       mapFloorPromise.then(function(mapFloor) {
         controller.set('mapFloor', mapFloor);

@@ -3,7 +3,7 @@ App.EventNameIndexRoute = Ember.Route.extend({
 
   // We actually return an Event here, not an EventName
   model: function(params) {
-    return this.modelFor('event_name');
+    return this.modelFor('eventName');
   },
 
   setupController: function(controller, model) {
@@ -13,7 +13,7 @@ App.EventNameIndexRoute = Ember.Route.extend({
 
     function setMapAndMapFloor(map) {
       controller.set('map', map);
-      var mapFloorPromise = store.find('map_floor', map.get('continent_id') + '.' + map.get('default_floor'));
+      var mapFloorPromise = store.find('mapFloor', map.get('continent_id') + '.' + map.get('default_floor'));
 
       mapFloorPromise.then(function(mapFloor) {
         controller.set('mapFloor', mapFloor);
