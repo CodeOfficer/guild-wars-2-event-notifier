@@ -1,4 +1,4 @@
-App.ApplicationSerializer = DS.RESTSerializer.extend({
+App.ApplicationSerializer = DS.ActiveModelSerializer.extend({
 
   // extractSingle: function(store, type, payload) {
   //   console.log('extractSingle', arguments);

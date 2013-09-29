@@ -1,5 +1,5 @@
 
-App.ApplicationAdapter = DS.RESTAdapter.extend({
+App.ApplicationAdapter = DS.ActiveModelAdapter.extend({
 
   host: 'https://api.guildwars2.com',
 
