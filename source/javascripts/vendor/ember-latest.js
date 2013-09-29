@@ -1,15 +1,15 @@
 // ==========================================================================
 // Project:   Ember - JavaScript Application Framework
-// Copyright: Â©2011-2013 Tilde Inc. and contributors
-//            Portions Â©2006-2011 Strobe Inc.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2011-2013 Tilde Inc. and contributors
+//            Portions ©2006-2011 Strobe Inc.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license
 //            See https://raw.github.com/emberjs/ember.js/master/LICENSE
 // ==========================================================================
 
 
-// Version: v1.0.0-198-gc766306
-// Last commit: c766306 (2013-09-29 09:10:42 -0700)
+// Version: v1.0.0-192-g595ea8c
+// Last commit: 595ea8c (2013-09-28 00:23:21 -0400)
 
 
 (function() {
@@ -188,9 +188,9 @@ if (!Ember.testing) {
 
 // ==========================================================================
 // Project:   Ember - JavaScript Application Framework
-// Copyright: Â©2011-2013 Tilde Inc. and contributors
-//            Portions Â©2006-2011 Strobe Inc.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2011-2013 Tilde Inc. and contributors
+//            Portions ©2006-2011 Strobe Inc.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license
 //            See https://raw.github.com/emberjs/ember.js/master/LICENSE
 // ==========================================================================
@@ -10662,7 +10662,7 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     This returns the objects at the specified indexes, using `objectAt`.
 
     ```javascript
-    var arr =Â ['a', 'b', 'c', 'd'];
+    var arr = ['a', 'b', 'c', 'd'];
     arr.objectsAt([0, 1, 2]);  // ["a", "b", "c"]
     arr.objectsAt([2, 3, 4]);  // ["c", "d", undefined]
     ```
@@ -23489,7 +23489,7 @@ define("metamorph",
     "use strict";
     // ==========================================================================
     // Project:   metamorph
-    // Copyright: Â©2011 My Company Inc. All rights reserved.
+    // Copyright: ©2011 My Company Inc. All rights reserved.
     // ==========================================================================
 
     var K = function() {},
@@ -25568,7 +25568,7 @@ EmberHandlebars.registerHelper('unless', function(context, options) {
   ```
 
   All three strategies - string return value, boolean return value, and
-  hard-coded value â€“ can be combined in a single declaration:
+  hard-coded value – can be combined in a single declaration:
 
   ```handlebars
   <img {{bind-attr class=":class-name-to-always-apply view.someBool:class-name-if-true view.someProperty"}}>
