@@ -7,6 +7,6 @@ App.ApplicationAdapter = DS.ActiveModelAdapter.extend({
 
   buildURL: function(type, id) {
     return this._super(type, id) + ".json";
-  },
+  }
 
 });
