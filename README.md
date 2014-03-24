@@ -1,7 +1,6 @@
-
 # Guild Wars 2 Event Notifier
 
-Created using Ember. This is a work in progress.
+Created using Ember. Moved to https://github.com/CodeOfficer/guild-wars-2
 
 ```
 bundle install
